@@ -2,13 +2,13 @@
 
 Na workshope budeme spoločne pracovať s jedným zdieľaným **úložiskom** (repozitárom) — miestom, kde žije kód a jeho história.
 
-Aby si sa k nemu vedel(a) pripojiť a robiť zmeny, potrebuješ urobiť **tri kroky** v tomto poradí:
+Aby si sa k nemu vedela pripojiť a robiť zmeny, potrebuješ urobiť **tri kroky** v tomto poradí:
 
 1. **Vytvoriť si GitHub účet** — tam úložisko žije online.
 2. **Nainštalovať si GitKraken** — aplikácia, cez ktorú budeš s úložiskom pracovať priamo z počítača.
 3. **Požiadať o prístup k úložisku** — pošleš mi svoje GitHub meno a ja ťa pozvem.
 
-> 💡 **Kroky 1 a 2 zvládneš úplne sám(a) ešte pred workshopom.** Krok 3 (prístup) je len pozvánka — **nie je to blokujúci bod.** Aj keby ti pozvánka neprišla včas, na workshope to vyriešime za pár sekúnd. Hlavné je mať hotový GitHub účet a nainštalovaný GitKraken.
+> 💡 **Kroky 1 a 2 zvládneš úplne sama ešte pred workshopom.** Krok 3 (prístup) je len pozvánka — **nie je to blokujúci bod.** Aj keby ti pozvánka neprišla včas, na workshope to vyriešime za pár sekúnd. Hlavné je mať hotový GitHub účet a nainštalovaný GitKraken.
 
 Stručný prehľad nástrojov:
 
@@ -45,13 +45,13 @@ Stručný prehľad nástrojov:
 
 ## Krok 3 — Požiadaj o prístup k úložisku
 
-> ⚠️ Tento krok **nie je blokujúci** — pokojne urob kroky 1 a 2 aj keď si tu ešte nedostal(a) odpoveď. Na workshope prístup doriešime hneď na úvod.
+> ⚠️ Tento krok **nie je blokujúci** — pokojne urob kroky 1 a 2 aj keď si tu ešte nedostala odpoveď. Na workshope prístup doriešime hneď na úvod.
 
 1. Pošli mi svoje **GitHub používateľské meno** na `spekarovic@gmail.com`.
 2. Príde ti email s **pozvánkou na spoluprácu** na úložisku.
 3. Pozvánku **potvrď** (klikni na odkaz v emaile).
 
-Hotovo — teraz máš prístup k zdieľanému úložisku a si pripravený(á) na workshop. 🎉
+Hotovo — teraz máš prístup k zdieľanému úložisku a si pripravená na workshop. 🎉
 
 ---
 
