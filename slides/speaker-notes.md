@@ -14,15 +14,15 @@
 
 ---
 
-## Slajd 2 — Predstavenie *(úvod, ~1 min)*
-**Povedz:** Volám sa **Stano Pekarovič**, pracujem ako **Solutions Architect** a školím pre **Aj Ty v IT**.
+## Slajd 2 — Niečo málo o mne *(úvod, ~1 min)*
+**Povedz:** Volám sa **Stano Pekarovič**. V IT pôsobím už viac ako **8 rokov** — značnú časť kariéry som robil ako **developer**, posledné roky pôsobím ako **Solutions Architect**. Mimo práce občas školím pre **Aj Ty v IT** kurz programovania v **Jave**.
 
-Pridaj pár vlastných viet — čomu sa venuješ, prečo ťa git baví, že dnes ideme spolu od úplného začiatku.
+Pokojne pridaj vetu, prečo ťa git baví a že dnes ideme spolu od úplného začiatku.
 
 ---
 
 ## Slajd 3 — Čo dnes spravíme *(úvod, ~8 min)*
-**Hlavná správa:** dnes si git **demystifikujeme**. Žiadna mágia — len pár jasných pojmov a jeden základný workflow, ktorý si rovno vyskúšame.
+**Hlavná správa:** dnes sa **zoznámime so základnými konceptami gitu**. Žiadna mágia — len pár jasných pojmov a jeden základný workflow, ktorý si rovno vyskúšame.
 
 **Cieľ nie je** naučiť sa všetko, ale **pochopiť, čo git je, na čo a ako**.
 
@@ -79,13 +79,15 @@ Najčastejší zmätok začiatočníkov — venuj tomu čas. Prejdi tri logá:
 
 ---
 
-## Slajd 9 — Mentálny model: tri miesta *(model, ~5 min)*
-**Povedz:** Predstav si, že zmena cestuje cez tri miesta:
-1. **Tvoj počítač** — pracovná verzia, tu súbory upravuješ.
-2. **Commit** — uložíš krok do histórie (pozor, stále len na tvojom počítači!).
-3. **GitHub** — keď chceš, aby zmeny videli ostatní, pošleš ich do cloudu.
+## Slajd 9 — Tri miesta v gite *(model, ~5 min)*
+**Povedz:** Kým sa zmena uloží do histórie, prejde na tvojom počítači cez tri miesta:
+1. **Pracovný priečinok** (working directory) — súbory, ktoré práve upravuješ.
+2. **Príprava** (staging area) — sem vyberieš, čo presne pôjde do najbližšieho commitu. Môžeš tak uložiť aj len časť zmien.
+3. **Repozitár** — história uložených commitov.
 
-**Poznámka pre teba (nehovor nahlas, ak sa nepýtajú):** zámerne nezavádzam „staging area" ako samostatný pojem — v GitKrakene to bude len „vyberiem, čo ide do commitu". Drž to jednoduché, aby sa nepreťažili.
+**Prechody:** `stage` = pridám zmenu do prípravy · `commit` = uložím pripravené do histórie.
+
+**V GitKrakene:** stage = zaškrtnem súbor, commit = tlačidlo Commit. Netreba memorovať pojmy — dôležitý je **tok**: upravím → vyberiem do prípravy → uložím.
 
 ---
 
