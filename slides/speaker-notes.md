@@ -161,14 +161,34 @@ Workflow: *niekto zmenil remote → ja dám pull → mám to lokálne.*
 
 ---
 
-## Slajd 16 — Celý kolobeh *(súhrn, ~5 min)*
-**Klikaním** rozsvecuj body na osi: `clone` (mám projekt) → `edit` (upravím) → `commit` (uložím krok) → `push` (zdieľam) → `pull` (beriem zmeny ostatných) → a znova.
+## Slajd 16 — Denný kolobeh *(súhrn, ~5 min)*
+**Klikaním** rozsvecuj body: `clone` (len **prvýkrát** — stiahnem si projekt) → potom **každý deň dokola**: `pull` (najprv si stiahnem najnovšie zmeny ostatných) → `edit` (robím) → `commit` (ukladám kroky) → `push` (zdieľam).
 
-**Povedz:** Toto je celý dnešný kolobeh. *(Nechaj ich zopakovať vlastnými slovami.)*
+**Zdôrazni:** `pull` je na **začiatku** práce, nie na konci — chcem začínať z aktuálnej verzie. A zajtra zas: pull → edit → commit → push. *(Nechaj ich zopakovať vlastnými slovami.)*
 
 ---
 
-## Slajd 17 — Slovníček *(súhrn, ~2 min)*
+## Slajd 17 — Pár dobrých zvykov *(súhrn, ~2 min)*
+Povedz to ako kamarátske rady, nie pravidlá:
+- **Commituj často a po malých krokoch** — jeden logický krok = jeden commit (ľahšie sa v tom vyznáš a prípadne vrátiš).
+- **Píš jasné commit správy** — čo a prečo.
+- **Pullni pred začatím práce** — začni z najnovšej verzie, vyhneš sa zbytočným kolíziám.
+- **Pushuj pravidelne** — nestrácaš prácu a tím vidí tvoje zmeny.
+- **Necommituj balast** — heslá, tokeny, dočasné a vygenerované súbory do repozitára nepatria.
+
+---
+
+## Slajd 18 — Spolupráca v praxi (rôzne súbory) *(súhrn, ~3 min)*
+Demonštruj happy path bez konfliktu:
+1. **Ty** commitneš `about-me.md`, **kolegyňa** commitne `notes.md` — každá u seba lokálne, **rôzne súbory**.
+2. **Ty pushneš** prvá → na GitHube je tvoj `about-me.md`.
+3. **Kolegyňa** musí najprv **pullnúť** (stiahne si tvoj súbor), a potom **pushne** → na GitHube sú **oba** súbory.
+
+**Pointa:** keď meníte rôzne súbory (alebo rôzne miesta), git zmeny pokojne **spojí — žiadny konflikt**. Konflikt vzniká len keď obe meníte **to isté miesto** v tom istom súbore — to je téma na workshop 2.
+
+---
+
+## Slajd 19 — Slovníček *(súhrn, ~2 min)*
 **Povedz:** Ak si z dneška zapamätáte len štyri slová a čo robia, splnili sme účel:
 - `clone` — stiahnem projekt z GitHubu na počítač
 - `commit` — uložím krok do histórie (lokálne)
@@ -177,14 +197,14 @@ Workflow: *niekto zmenil remote → ja dám pull → mám to lokálne.*
 
 ---
 
-## Slajd 18 — Nabudúce *(teaser, ~2 min)*
+## Slajd 20 — Nabudúce *(teaser, ~2 min)*
 **Povedz:** Dnes sme pracovali v jednej línii. Nabudúce si otvoríme vlastné **vetvy (branches)** — bezpečný priestor, kde si skúšaš zmeny bez toho, aby si zasiahla spoločnú verziu. Naučíme sa **merge requesty** (návrh zlúčenia späť) a ako riešiť **konflikty**.
 
 **Povzbuď:** to najťažšie — mentálny model — máte už za sebou.
 
 ---
 
-## Slajd 19 — Záver + otázky *(~10 min)*
+## Slajd 21 — Záver + otázky *(~10 min)*
 **Zopakovanie vlastnými slovami (spýtaj sa pléna):**
 - Čo je commit?
 - Aký je rozdiel medzi commit a push?
@@ -198,11 +218,11 @@ Workflow: *niekto zmenil remote → ja dám pull → mám to lokálne.*
 ### Orientačný timing (zo osnovy)
 | Blok | Slajdy | Min |
 |---|---|---|
-| Úvod + predstavenie + demystifikácia | 1–3 | 10 |
+| Úvod + predstavenie + koncepty | 1–3 | 10 |
 | Problém bez gitu | 4–5 | 10 |
 | Mentálny model | 6–10 | 20 |
 | Clone | 11 | 15 |
-| Zmena + commit | 12–13 | 25 |
+| Zmena + commit + diff | 12–13 | 25 |
 | Push | 14 | 15 |
 | Pull | 15 | 15 |
-| Súhrn + otázky | 16–19 | 10 |
+| Súhrn (kolobeh, zvyky, spolupráca) + otázky | 16–21 | 10 |

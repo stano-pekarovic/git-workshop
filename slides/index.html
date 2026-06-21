@@ -128,6 +128,21 @@
   .tl .node2 b{position:absolute; top:-2.2rem; left:50%; transform:translateX(-50%); font-family:ui-monospace,monospace; font-size:.78rem; color:var(--muted); white-space:nowrap}
   .tl .node2.on{background:var(--git); box-shadow:0 0 0 6px rgba(240,81,51,.18)}
 
+  /* ---- good practices ---- */
+  .gp{display:grid; gap:.7rem; margin-top:2.2rem; width:min(720px,92vw); text-align:left}
+  .gpi{display:grid; grid-template-columns:auto 1fr; gap:.9rem; align-items:baseline; padding:.85rem 1.2rem; border:1px solid var(--line); border-radius:12px; background:var(--ink2)}
+  .gpi::before{content:"✓"; color:var(--mint); font-weight:800; font-size:1.1rem}
+  .gpi b{font-size:clamp(1rem,1.9vw,1.2rem)}
+  .gpi span{grid-column:2; color:var(--muted); font-size:.92rem}
+
+  /* ---- collab steps ---- */
+  .steps{display:grid; gap:.9rem; margin-top:2rem; width:min(820px,94vw); text-align:left}
+  .step{display:grid; grid-template-columns:auto 1fr; gap:1rem; align-items:start; padding:1rem 1.3rem; border:1px solid var(--line); border-radius:14px; background:var(--ink2)}
+  .step .snum{display:flex; align-items:center; justify-content:center; width:30px; height:30px; border-radius:50%; background:var(--git); color:#fff; font-weight:800; font-size:1rem}
+  .step .stxt{font-size:clamp(.98rem,1.8vw,1.18rem); line-height:1.45}
+  .step .stxt code{font-family:ui-monospace,Menlo,monospace; background:rgba(232,67,31,.1); color:var(--git); padding:.08em .45em; border-radius:6px; font-size:.92em}
+  .step .shint{display:block; color:var(--muted); font-size:.9rem; margin-top:.3rem}
+
   /* ---- cue (demo) ---- */
   .cue{margin-top:2.4rem; display:inline-flex; align-items:center; gap:.7rem; border:1.5px dashed var(--git); color:var(--git); border-radius:999px; padding:.6em 1.3em; font-weight:800; letter-spacing:.02em}
 
@@ -330,13 +345,13 @@
         <!-- connectors left: push (up, mint) vpravo, pull (down, sky) vľavo -->
         <line x1="235" y1="298" x2="350" y2="140" stroke="#0E9F6E" stroke-width="2.4" marker-end="url(#amint)"/>
         <line x1="300" y1="140" x2="170" y2="298" stroke="#2563EB" stroke-width="2.4" marker-end="url(#asky)"/>
-        <text x="312" y="208" fill="#0E9F6E" font-size="15" font-weight="700" font-family="ui-monospace,monospace" transform="rotate(-54 312 208)">push</text>
-        <text x="206" y="232" fill="#2563EB" font-size="15" font-weight="700" font-family="ui-monospace,monospace" transform="rotate(-54 206 232)">pull</text>
+        <text x="300" y="224" fill="#0E9F6E" font-size="15" font-weight="700" font-family="ui-monospace,monospace" transform="rotate(-54 300 224)">push</text>
+        <text x="228" y="214" fill="#2563EB" font-size="15" font-weight="700" font-family="ui-monospace,monospace" transform="rotate(-54 228 214)">pull</text>
         <!-- connectors right: push (up, mint) vľavo, pull (down, sky) vpravo -->
         <line x1="525" y1="298" x2="410" y2="140" stroke="#0E9F6E" stroke-width="2.4" marker-end="url(#amint)"/>
         <line x1="460" y1="140" x2="590" y2="298" stroke="#2563EB" stroke-width="2.4" marker-end="url(#asky)"/>
-        <text x="448" y="208" fill="#0E9F6E" font-size="15" font-weight="700" font-family="ui-monospace,monospace" transform="rotate(54 448 208)">push</text>
-        <text x="556" y="232" fill="#2563EB" font-size="15" font-weight="700" font-family="ui-monospace,monospace" transform="rotate(54 556 232)">pull</text>
+        <text x="460" y="224" fill="#0E9F6E" font-size="15" font-weight="700" font-family="ui-monospace,monospace" transform="rotate(54 460 224)">push</text>
+        <text x="532" y="214" fill="#2563EB" font-size="15" font-weight="700" font-family="ui-monospace,monospace" transform="rotate(54 532 214)">pull</text>
         <!-- local left -->
         <rect x="70" y="300" width="200" height="104" rx="16" fill="#FFFFFF" stroke="#CFC8B8" stroke-width="2"/>
         <text x="170" y="340" text-anchor="middle" font-size="28">💻</text>
@@ -412,14 +427,39 @@
     <div class="sub rise d3"><b style="color:var(--git)">Pozor:</b> pull nie je sťahovanie súborov — sťahuje commity (históriu).</div>
   </section>
 
-  <!-- 15 WHOLE WORKFLOW -->
-  <section class="slide" data-sec="Súhrn" data-notes="Spoj všetko do jednej slučky. Klikaním rozsvecuj body: clone (mám projekt) → edit (upravím) → commit (uložím krok) → push (zdieľam) → pull (beriem zmeny ostatných) → a znova. Toto je celý dnešný kolobeh. Nechaj ich to zopakovať vlastnými slovami.">
-    <div class="kicker rise">Celý kolobeh</div>
-    <h2 class="rise d1">Toto je dnešný workflow</h2>
+  <!-- 15 WHOLE WORKFLOW (daily cycle) -->
+  <section class="slide" data-sec="Súhrn" data-notes="Spoj všetko do denného kolobehu. Klikaním rozsvecuj body: clone (len PRVÝKRÁT, stiahnem si projekt) → potom každý deň dokola: pull (najprv si stiahnem najnovšie zmeny ostatných) → edit (robím) → commit (ukladám kroky) → push (zdieľam). Zdôrazni: pull je na ZAČIATKU práce, nie na konci — chcem začínať z aktuálnej verzie. A zajtra zas: pull → edit → commit → push.">
+    <div class="kicker rise">Denný kolobeh</div>
+    <h2 class="rise d1">Takto to ide stále dokola</h2>
     <div class="tl rise d2" id="bigtl">
       <div class="axis"><div class="grown" id="grown"></div></div>
     </div>
-    <div class="sub rise d3">Klikaj → os sa plní. clone · edit · commit · push · pull</div>
+    <div class="sub rise d3">clone len prvýkrát · potom denne: pull → edit → commit → push &nbsp;↻</div>
+  </section>
+
+  <!-- GOOD PRACTICES -->
+  <section class="slide" data-sec="Súhrn" data-notes="Pár jednoduchých zvykov, ktoré život s gitom uľahčia. 1) Commituj často a po malých krokoch — jeden logický krok = jeden commit (ľahšie sa v tom potom vyznáš a prípadne vrátiš). 2) Píš jasné commit správy — čo a prečo. 3) Pullni pred začatím práce — začni z najnovšej verzie, vyhneš sa zbytočným kolíziám. 4) Pushuj pravidelne — nestrácaš prácu a tím vidí tvoje zmeny. 5) Necommituj balast — heslá, tokeny, dočasné a vygenerované súbory do repozitára nepatria. Nehovor to ako pravidlá, skôr ako kamarátske rady.">
+    <div class="kicker rise">Pár dobrých zvykov</div>
+    <h2 class="rise d1">Ako si to <span style="color:var(--git)">uľahčiť</span></h2>
+    <div class="gp rise d2">
+      <div class="gpi"><b>Commituj často a po malých krokoch</b><span>jeden logický krok = jeden commit</span></div>
+      <div class="gpi"><b>Píš jasné commit správy</b><span>čo a prečo si zmenila</span></div>
+      <div class="gpi"><b>Pullni pred začatím práce</b><span>začni z najnovšej verzie</span></div>
+      <div class="gpi"><b>Pushuj pravidelne</b><span>nestrácaš prácu, tím vidí tvoje zmeny</span></div>
+      <div class="gpi"><b>Necommituj balast</b><span>heslá, dočasné a vygenerované súbory nie</span></div>
+    </div>
+  </section>
+
+  <!-- COLLAB DEMO: two people, different files -->
+  <section class="slide" data-sec="Súhrn" data-notes="Demonštrácia: ty aj kolegyňa pracujete naraz, ale v RÔZNYCH súboroch. Krok 1: ty commitneš about-me.md, kolegyňa commitne notes.md — každá u seba lokálne. Krok 2: ty pushneš prvá → na GitHube je tvoj súbor. Krok 3: kolegyňa musí najprv pullnúť (stiahne si tvoj about-me.md), a potom pushne → na GitHube sú oba súbory. Pointa: keď meníte rôzne súbory (alebo rôzne miesta), git zmeny pokojne spojí — žiadny konflikt. Konflikt vzniká len keď obe meníte to isté miesto v tom istom súbore — to je téma na workshop 2.">
+    <div class="kicker rise">Spolupráca v praxi</div>
+    <h2 class="rise d1">Keď robíte v <span style="color:var(--git)">rôznych súboroch</span></h2>
+    <div class="steps rise d2">
+      <div class="step"><span class="snum">1</span><div class="stxt"><b>Ty</b> commitneš <code>about-me.md</code> · <b>kolegyňa</b> <code>notes.md</code><span class="shint">každá u seba lokálne, rôzne súbory</span></div></div>
+      <div class="step"><span class="snum">2</span><div class="stxt"><b>Ty pushneš</b> → na GitHube je <code>about-me.md</code></div></div>
+      <div class="step"><span class="snum">3</span><div class="stxt"><b>Kolegyňa pullne</b> (dostane tvoj súbor) a potom <b>pushne</b> → na GitHube sú <code>about-me.md</code> + <code>notes.md</code><span class="shint">rôzne súbory = git ich spojí, žiadny konflikt</span></div></div>
+    </div>
+    <div class="sub rise d3">Konflikt hrozí len keď obe meníte to isté miesto — to si ukážeme nabudúce.</div>
   </section>
 
   <!-- 16 GLOSSARY -->
@@ -479,7 +519,7 @@
   var fill = document.createElement('span'); fill.className='fill'; spine.appendChild(fill);
 
   // big timeline interactive build
-  var bigStops = ['clone','edit','commit','push','pull'];
+  var bigStops = ['clone','pull','edit','commit','push'];
   var bigStep = 0, bigEl = document.getElementById('bigtl'), grown = document.getElementById('grown');
   function renderBig(){
     if(!bigEl) return;
