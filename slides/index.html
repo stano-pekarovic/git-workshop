@@ -1,0 +1,415 @@
+<title>Git — časová os tvojho projektu</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>
+  :root{
+    --ink:#0E1116; --ink2:#161B22; --paper:#F5F1E8; --muted:#8A93A0;
+    --git:#F05133; --mint:#5BD6A6; --sky:#6AA9FF; --line:#2A313B;
+    --slot: clamp(1rem, 2.2vw, 1.6rem);
+  }
+  *{box-sizing:border-box; margin:0; padding:0}
+  html,body{height:100%}
+  body{
+    background:var(--ink); color:var(--paper);
+    font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    overflow:hidden; -webkit-font-smoothing:antialiased;
+  }
+  .deck{position:fixed; inset:0; display:flex; align-items:center; justify-content:center}
+
+  /* ---- slide ---- */
+  .slide{
+    position:absolute; inset:0;
+    display:none; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center; padding:6vh 7vw 14vh;
+    opacity:0; transition:opacity .45s ease;
+  }
+  .slide.active{display:flex; opacity:1}
+  .slide.active .rise{animation:rise .55s cubic-bezier(.2,.7,.2,1) both}
+  .slide.active .rise.d1{animation-delay:.08s}
+  .slide.active .rise.d2{animation-delay:.18s}
+  .slide.active .rise.d3{animation-delay:.30s}
+  @keyframes rise{from{opacity:0; transform:translateY(18px)}to{opacity:1; transform:none}}
+
+  .kicker{font-size:.82rem; letter-spacing:.28em; text-transform:uppercase; color:var(--git); font-weight:700; margin-bottom:1.4rem}
+  h1{font-size:clamp(2.2rem,7vw,5.4rem); line-height:1.02; font-weight:800; letter-spacing:-.02em}
+  h1 .ac{color:var(--git)}
+  h2{font-size:clamp(1.7rem,4.6vw,3.3rem); line-height:1.06; font-weight:800; letter-spacing:-.015em; max-width:18ch}
+  .lead{font-size:clamp(1.05rem,2.1vw,1.5rem); color:#D7D2C6; max-width:30ch; margin-top:1.4rem; line-height:1.4}
+  .sub{color:var(--muted); font-size:clamp(.95rem,1.7vw,1.2rem); margin-top:1.1rem; letter-spacing:.02em}
+  .mono{font-family:ui-monospace,Menlo,Consolas,monospace}
+
+  /* ---- title spine ---- */
+  .title-spine{display:flex; align-items:center; gap:0; margin-top:3.2rem}
+  .title-spine .dot{width:16px; height:16px; border-radius:50%; background:var(--git); box-shadow:0 0 0 6px rgba(240,81,51,.16)}
+  .title-spine .seg{width:54px; height:3px; background:linear-gradient(90deg,var(--git),rgba(240,81,51,.25))}
+
+  /* ---- chips / lists ---- */
+  .flow{display:flex; flex-wrap:wrap; gap:.7rem; justify-content:center; margin-top:2.2rem}
+  .chip{border:1.5px solid var(--line); border-radius:999px; padding:.55em 1.1em; font-weight:700; font-size:clamp(.95rem,1.9vw,1.3rem); background:var(--ink2)}
+  .chip .mono{color:var(--git)}
+  .arrow{align-self:center; color:var(--muted); font-size:1.4rem}
+
+  .verbs{display:grid; gap:1rem; margin-top:2.4rem; width:min(760px,92vw); text-align:left}
+  .verb{display:grid; grid-template-columns:auto 1fr; gap:1.1rem; align-items:baseline; padding:1rem 1.2rem; border:1px solid var(--line); border-radius:14px; background:var(--ink2)}
+  .verb b{font-family:ui-monospace,Menlo,monospace; color:var(--git); font-size:1.25rem}
+  .verb span{color:#D7D2C6; font-size:clamp(.95rem,1.7vw,1.15rem)}
+
+  /* ---- chaos pile (problem) ---- */
+  .pile{margin-top:2rem; display:flex; flex-direction:column; gap:.5rem; font-family:ui-monospace,Menlo,monospace; color:#C9C3B6; font-size:clamp(.85rem,1.7vw,1.15rem); text-align:left}
+  .pile div{opacity:0; transform:translateX(-10px)}
+  .slide.active .pile div{animation:fadein .4s ease forwards}
+  .slide.active .pile div:nth-child(1){animation-delay:.2s}
+  .slide.active .pile div:nth-child(2){animation-delay:.45s}
+  .slide.active .pile div:nth-child(3){animation-delay:.7s}
+  .slide.active .pile div:nth-child(4){animation-delay:.95s}
+  .slide.active .pile div:nth-child(5){animation-delay:1.2s; color:var(--git)}
+  @keyframes fadein{to{opacity:1; transform:none}}
+
+  /* ---- three places ---- */
+  .places{display:flex; gap:clamp(.6rem,2vw,2rem); align-items:stretch; margin-top:2.6rem; flex-wrap:wrap; justify-content:center}
+  .place{border:1.5px solid var(--line); border-radius:18px; padding:1.4rem 1.5rem; min-width:200px; background:var(--ink2)}
+  .place .t{font-weight:800; font-size:1.2rem; margin-bottom:.4rem}
+  .place .d{color:var(--muted); font-size:.98rem; line-height:1.35}
+  .place.work{border-color:#3a4350}
+  .place.local{border-color:var(--git)}
+  .place.remote{border-color:var(--sky)}
+  .conn{align-self:center; color:var(--muted); font-weight:700; font-size:1.5rem}
+
+  /* ---- local vs remote (laptop/cloud) ---- */
+  .lr{display:flex; gap:clamp(1rem,5vw,4rem); align-items:center; margin-top:2.6rem; flex-wrap:wrap; justify-content:center}
+  .node{display:flex; flex-direction:column; align-items:center; gap:.8rem}
+  .node .ico{font-size:clamp(3rem,8vw,5rem)}
+  .node .lbl{font-weight:800; font-size:1.15rem}
+  .node .lbl small{display:block; color:var(--muted); font-weight:500; font-size:.85rem; margin-top:.2rem}
+  .pp{display:flex; flex-direction:column; gap:1rem}
+  .pp .pa{display:flex; align-items:center; gap:.6rem; font-weight:800; font-family:ui-monospace,monospace}
+  .pp .push{color:var(--mint)} .pp .pull{color:var(--sky)}
+
+  /* ---- diff ---- */
+  .diff{margin-top:2.2rem; width:min(620px,92vw); text-align:left; font-family:ui-monospace,Menlo,monospace; font-size:clamp(.85rem,1.7vw,1.1rem); border:1px solid var(--line); border-radius:12px; overflow:hidden}
+  .diff div{padding:.45em 1em}
+  .diff .ctx{color:#C9C3B6; background:var(--ink2)}
+  .diff .add{color:#9be8c4; background:rgba(91,214,166,.12)}
+  .diff .add::before{content:"+ "}
+  .diff .del{color:#f3a99a; background:rgba(240,81,51,.12); text-decoration:none}
+  .diff .del::before{content:"- "}
+
+  /* ---- good/bad commit msgs ---- */
+  .cols{display:grid; grid-template-columns:1fr 1fr; gap:1.2rem; margin-top:2.2rem; width:min(820px,94vw); text-align:left}
+  @media(max-width:620px){.cols{grid-template-columns:1fr}}
+  .card{border:1px solid var(--line); border-radius:14px; padding:1.1rem 1.3rem; background:var(--ink2)}
+  .card h3{font-size:.78rem; letter-spacing:.18em; text-transform:uppercase; margin-bottom:.7rem}
+  .card.ok h3{color:var(--mint)} .card.no h3{color:var(--git)}
+  .card p{font-family:ui-monospace,Menlo,monospace; color:#C9C3B6; line-height:1.9; font-size:1rem}
+
+  /* ---- big timeline (workflow) ---- */
+  .tl{position:relative; width:min(880px,92vw); margin-top:3rem; height:120px}
+  .tl .axis{position:absolute; top:50%; left:0; right:0; height:3px; background:var(--line)}
+  .tl .axis .grown{position:absolute; left:0; top:0; height:100%; width:0; background:var(--git); transition:width .6s ease}
+  .tl .node2{position:absolute; top:50%; transform:translate(-50%,-50%); width:18px; height:18px; border-radius:50%; background:var(--ink); border:3px solid var(--git); transition:.4s}
+  .tl .node2 b{position:absolute; top:-2.2rem; left:50%; transform:translateX(-50%); font-family:ui-monospace,monospace; font-size:.78rem; color:var(--muted); white-space:nowrap}
+  .tl .node2.on{background:var(--git); box-shadow:0 0 0 6px rgba(240,81,51,.18)}
+
+  /* ---- cue (demo) ---- */
+  .cue{margin-top:2.4rem; display:inline-flex; align-items:center; gap:.7rem; border:1.5px dashed var(--git); color:var(--git); border-radius:999px; padding:.6em 1.3em; font-weight:800; letter-spacing:.02em}
+
+  /* ---- bottom spine / progress ---- */
+  .foot{position:fixed; left:0; right:0; bottom:0; height:54px; display:flex; align-items:center; padding:0 max(3vw,18px); gap:14px; z-index:5}
+  .spine{flex:1; position:relative; height:2px; background:var(--line)}
+  .spine .fill{position:absolute; left:0; top:0; height:100%; background:var(--git); width:0; transition:width .4s ease}
+  .spine .pip{position:absolute; top:50%; transform:translate(-50%,-50%); width:7px; height:7px; border-radius:50%; background:var(--line); transition:.3s}
+  .spine .pip.done{background:var(--git)}
+  .spine .pip.cur{background:var(--git); box-shadow:0 0 0 4px rgba(240,81,51,.2); width:9px; height:9px}
+  .pgnum{color:var(--muted); font-size:.8rem; font-family:ui-monospace,monospace; min-width:70px}
+  .brand{color:var(--muted); font-size:.8rem; font-weight:700; letter-spacing:.12em}
+
+  /* ---- presenter notes ---- */
+  #notes{position:fixed; left:0; right:0; bottom:54px; max-height:42vh; overflow:auto; background:#06080B; border-top:2px solid var(--git); padding:1.2rem max(4vw,20px); display:none; z-index:8}
+  #notes.show{display:block}
+  #notes h4{color:var(--git); font-size:.78rem; letter-spacing:.2em; text-transform:uppercase; margin-bottom:.6rem}
+  #notes .body{color:#D7D2C6; font-size:.96rem; line-height:1.5; white-space:pre-wrap; max-width:90ch}
+  .hint{position:fixed; top:14px; right:16px; color:var(--muted); font-size:.72rem; font-family:ui-monospace,monospace; z-index:6; opacity:.6}
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation:none !important; transition:none !important}
+  }
+  @media print{ body{overflow:visible} .slide{display:flex; position:relative; page-break-after:always; min-height:100vh} .foot,#notes,.hint{display:none} }
+</style>
+
+<div class="deck" id="deck">
+
+  <!-- 1 TITLE -->
+  <section class="slide" data-sec="Úvod" data-notes="VITAJTE. Predstav sa, povedz čo nás dnes čaká. Kľúčová veta na začiatok: 'Git nie je len ukladanie súborov — je to systém, ktorý si pamätá históriu projektu.' Nechaj zaznieť pokoj — dnes ideme pomaly a po krokoch. Žiadne predošlé skúsenosti netreba.">
+    <div class="kicker rise">Workshop 1 · WTA-A-24</div>
+    <h1 class="rise d1">Git: <span class="ac">časová os</span><br>tvojho projektu</h1>
+    <div class="title-spine rise d2"><span class="dot"></span><span class="seg"></span><span class="dot"></span><span class="seg"></span><span class="dot"></span></div>
+    <div class="sub rise d3">Základy bez stresu · clone → commit → push → pull</div>
+  </section>
+
+  <!-- 2 WHY / AGENDA -->
+  <section class="slide" data-sec="Úvod" data-notes="Nastav očakávania (~10 min na celý úvod). Povedz, že na konci tejto session budú vedieť: stiahnuť projekt, uložiť do neho zmenu a poslať ju ostatným. Branching a merge requesty NEDNES — to je workshop 2. Predstav 3 nástroje vetou: Git = nástroj na počítači, GitHub = miesto v cloude, GitKraken = okno cez ktoré s gitom pracujeme. Zdôrazni: nie sú to to isté.">
+    <div class="kicker rise">Čo dnes spolu zvládneme</div>
+    <h2 class="rise d1">Na konci budeš vedieť uložiť zmenu a zdieľať ju s tímom.</h2>
+    <div class="flow rise d2">
+      <span class="chip"><span class="mono">clone</span></span><span class="arrow">→</span>
+      <span class="chip"><span class="mono">commit</span></span><span class="arrow">→</span>
+      <span class="chip"><span class="mono">push</span></span><span class="arrow">→</span>
+      <span class="chip"><span class="mono">pull</span></span>
+    </div>
+    <div class="sub rise d3">Branching a merge requesty necháme na budúci workshop.</div>
+  </section>
+
+  <!-- 3 PROBLEM -->
+  <section class="slide" data-sec="Problém" data-notes="(~10 min) Spýtaj sa: poznáte to? Ukáž chaos s kópiami. Pointa: keď robíme kópie súborov, stratíme prehľad — ktorá verzia je tá pravá? Kto čo zmenil? Git toto rieši inak: NErobíme kópie. Máme jednu pracovnú verziu a Git si pamätá jej historické stavy.">
+    <div class="kicker rise">Život bez gitu</div>
+    <h2 class="rise d1">Poznáš to?</h2>
+    <div class="pile rise d2">
+      <div>projekt-final.docx</div>
+      <div>projekt-final-v2.docx</div>
+      <div>projekt-final-naozaj-final.docx</div>
+      <div>projekt-final-od-janky.docx</div>
+      <div>projekt-final-v2-OPRAVENE-fakt.docx</div>
+    </div>
+    <div class="lead rise d3">Ktorá je tá pravá? Kto čo zmenil? &nbsp;→&nbsp; musí to ísť lepšie.</div>
+  </section>
+
+  <!-- 4 SOLUTION = TIMELINE -->
+  <section class="slide" data-sec="Problém" data-notes="Toto je srdce mentálneho modelu. Veta: 'Git je ako časová os projektu. Každý bod na osi je uložený stav, ku ktorému sa viem kedykoľvek vrátiť alebo pozrieť čo sa vtedy zmenilo.' Žiadne kópie — jedna pracovná verzia + história. Tento obrázok (os s bodmi) sa bude vracať celou prezentáciou.">
+    <div class="kicker rise">Riešenie</div>
+    <h2 class="rise d1">Jedna verzia. <span style="color:var(--git)">Celá história.</span></h2>
+    <div class="title-spine rise d2" style="margin-top:2.6rem"><span class="dot"></span><span class="seg"></span><span class="dot"></span><span class="seg"></span><span class="dot"></span><span class="seg"></span><span class="dot"></span></div>
+    <div class="lead rise d3">Git = časová os projektu. Každý bod je uložený stav, ku ktorému sa vieš vrátiť.</div>
+  </section>
+
+  <!-- 5 GIT vs GITHUB vs GITKRAKEN -->
+  <section class="slide" data-sec="Pojmy" data-notes="Najčastejší zmätok začiatočníkov. Vysvetli pomaly: GIT je samotný nástroj/systém — žije na tvojom počítači. GITHUB je služba v cloude, kde repozitár zdieľame (ako Google Drive pre projekt). GITKRAKEN je grafická appka — pohodlné okno, cez ktoré s gitom pracujeme, aby sme nemuseli písať príkazy. Zopakuj: NIE SÚ TO TO ISTÉ.">
+    <div class="kicker rise">Tri slová, ktoré sa pletú</div>
+    <div class="places rise d1">
+      <div class="place work"><div class="t">Git</div><div class="d">nástroj/systém<br>na tvojom počítači</div></div>
+      <div class="place remote"><div class="t" style="color:var(--sky)">GitHub</div><div class="d">miesto v cloude,<br>kde repo zdieľame<br>(ako Drive pre projekt)</div></div>
+      <div class="place local"><div class="t" style="color:var(--git)">GitKraken</div><div class="d">appka — pohodlné<br>okno do gitu</div></div>
+    </div>
+    <div class="sub rise d3">Nie sú to to isté — sú to tri rôzne veci, ktoré spolupracujú.</div>
+  </section>
+
+  <!-- 6 REPOSITORY -->
+  <section class="slide" data-sec="Pojmy" data-notes="Repozitár (skrátene 'repo') = projekt, ktorý Git sleduje. Je to priečinok s tvojimi súbormi PLUS celá história zmien, ktorá k nim patrí. Súbory aj história žijú spolu na jednom mieste.">
+    <div class="kicker rise">Repozitár</div>
+    <h2 class="rise d1">Projekt <span style="color:var(--git)">+</span> jeho celá história, na jednom mieste.</h2>
+    <div class="lead rise d2">Priečinok s tvojimi súbormi a zároveň pamäť všetkých zmien. Skrátene „repo“.</div>
+  </section>
+
+  <!-- 7 COMMIT -->
+  <section class="slide" data-sec="Pojmy" data-notes="(~20 min mentálny model celkovo) Commit = uložený balíček zmien s popisom. KĽÚČOVÉ: commit nie je obyčajný 'save'. Save uloží súbor. Commit uloží VÝZNAMOVÝ KROK v histórii — bod na časovej osi, s vetou čo a prečo sa zmenilo. Ukáž dobré vs zlé správy. Dobrá správa = budúce ja (a kolegovia) hneď vie, čo sa stalo.">
+    <div class="kicker rise">Commit</div>
+    <h2 class="rise d1">Bod na osi — <span style="color:var(--git)">nie obyčajný „save“.</span></h2>
+    <div class="cols rise d2">
+      <div class="card ok"><h3>✓ Hovorí čo sa stalo</h3><p>Add my introduction<br>Fix typo in README<br>Update workshop notes</p></div>
+      <div class="card no"><h3>✗ Nepovie nič</h3><p>changes<br>update<br>stuff</p></div>
+    </div>
+    <div class="sub rise d3">Commit = uložený balíček zmien + krátky popis čo a prečo.</div>
+  </section>
+
+  <!-- 8 THREE PLACES / MENTAL MODEL -->
+  <section class="slide" data-sec="Model" data-notes="Zjednodušený mentálny model troch miest. 1) Tvoj počítač — pracovná verzia, tu súbory upravuješ. 2) Commit — uložíš krok do histórie (stále na tvojom počítači!). 3) GitHub — keď chceš, aby zmeny videli ostatní, pošleš ich do cloudu. Zámerne NEHOVORÍME o staging area ako o samostatnom koncepte — v GitKrakene len 'vyberieš čo ide do commitu'. Drž to jednoduché.">
+    <div class="kicker rise">Mentálny model</div>
+    <h2 class="rise d1">Zmena cestuje cez tri miesta</h2>
+    <div class="places rise d2">
+      <div class="place work"><div class="t">1 · Počítač</div><div class="d">pracovná verzia<br>tu upravuješ súbory</div></div>
+      <div class="conn">→</div>
+      <div class="place local"><div class="t" style="color:var(--git)">2 · Commit</div><div class="d">uložený krok<br>v histórii (na PC)</div></div>
+      <div class="conn">→</div>
+      <div class="place remote"><div class="t" style="color:var(--sky)">3 · GitHub</div><div class="d">zdieľaná kópia<br>pre celý tím</div></div>
+    </div>
+    <div class="sub rise d3">commit = uložím krok &nbsp;·&nbsp; push = pošlem ho na GitHub</div>
+  </section>
+
+  <!-- 9 LOCAL vs REMOTE -->
+  <section class="slide" data-sec="Model" data-notes="Analógia knižnice (z osnovy): Lokálne repo je tvoj pracovný zošit na stole — robíš si doma poznámky. Remote repo na GitHube je spoločná verzia v knižnici. Keď chceš, aby tvoje poznámky videli ostatní → PUSH (pošlem do knižnice). Keď chceš ich zmeny → PULL (vezmem si z knižnice). Push aj pull = pohyb HISTÓRIE medzi tvojím PC a GitHubom.">
+    <div class="kicker rise">Lokálne vs. vzdialené</div>
+    <div class="lr rise d1">
+      <div class="node"><div class="ico">💻</div><div class="lbl">Tvoj počítač<small>pracovný zošit na stole</small></div></div>
+      <div class="pp rise d2">
+        <div class="pa push">push&nbsp;→</div>
+        <div class="pa pull">←&nbsp;pull</div>
+      </div>
+      <div class="node"><div class="ico">☁️</div><div class="lbl">GitHub<small>spoločná verzia v knižnici</small></div></div>
+    </div>
+    <div class="sub rise d3">push = pošlem svoje commity hore &nbsp;·&nbsp; pull = stiahnem si commity ostatných</div>
+  </section>
+
+  <!-- 10 DEMO CLONE -->
+  <section class="slide" data-sec="Demo" data-notes="(~15 min) HANDS-ON: CLONE. Prepni do GitKrakenu. Kroky: 1) otvor GitKraken, 2) prihlás sa do GitHubu, 3) Clone repo → vyber 'wta-a-24', 4) otvor lokálny priečinok a ukáž že súbory sú fyzicky na počítači. Veta: 'Clone = zoberiem existujúci repozitár z GitHubu a vytvorím si jeho lokálnu kópiu na počítači.' Každá si naklonuje wta-a-24.">
+    <div class="kicker rise">Hands-on · 1</div>
+    <h2 class="rise d1"><span class="mono" style="color:var(--git)">clone</span> — stiahnem si projekt</h2>
+    <div class="lead rise d2">Zoberiem repozitár z GitHubu a vytvorím si jeho lokálnu kópiu na počítači.</div>
+    <div class="cue rise d3">→ prepni do GitKrakenu · repo <b class="mono">&nbsp;wta-a-24</b></div>
+  </section>
+
+  <!-- 11 DEMO CHANGE + DIFF -->
+  <section class="slide" data-sec="Demo" data-notes="(~25 min na zmenu+commit) HANDS-ON: každá upraví about-me.md (Meno / Obľúbený nápoj / Jedna vec ktorú sa chcem naučiť). V GitKrakene ukáž: súbor sa objaví ako 'changed'. Vysvetli DIFF: porovnanie starej a novej verzie — zelené riadky pridané, červené odobrané/zmenené. Toto je presne to, čo Git 'vidí'.">
+    <div class="kicker rise">Hands-on · 2</div>
+    <h2 class="rise d1">Git vidí, <span style="color:var(--git)">čo si zmenila</span></h2>
+    <div class="diff rise d2">
+      <div class="ctx"># About me</div>
+      <div class="del">Obľúbený nápoj:</div>
+      <div class="add">Obľúbený nápoj: káva</div>
+      <div class="ctx">Chcem sa naučiť:</div>
+      <div class="add">Chcem sa naučiť: testovať API</div>
+    </div>
+    <div class="sub rise d3">Diff = porovnanie verzií. Zelené = pridané, červené = odobrané/zmenené.</div>
+  </section>
+
+  <!-- 12 DEMO COMMIT -->
+  <section class="slide" data-sec="Demo" data-notes="HANDS-ON: COMMIT. V GitKrakene: vyber zmenu (čo ide do commitu), napíš zmysluplnú commit message (napr. 'Add my introduction'), vytvor commit. Ukáž, ako sa na časovej osi v GitKrakene objaví nový bod. Pripomeň: teraz je to uložené, ale STÁLE LEN na tvojom počítači.">
+    <div class="kicker rise">Hands-on · 3</div>
+    <h2 class="rise d1"><span class="mono" style="color:var(--git)">commit</span> — uložím krok do histórie</h2>
+    <div class="title-spine rise d2" style="margin-top:2.4rem">
+      <span class="dot"></span><span class="seg"></span><span class="dot"></span><span class="seg"></span>
+      <span class="dot" style="box-shadow:0 0 0 10px rgba(240,81,51,.18)"></span>
+    </div>
+    <div class="lead rise d3">Pribudol nový bod na osi. Zatiaľ ale len u teba na počítači.</div>
+  </section>
+
+  <!-- 13 DEMO PUSH -->
+  <section class="slide" data-sec="Demo" data-notes="(~15 min) HANDS-ON: PUSH. Veta: 'Commit = uložila som zmenu do histórie na svojom počítači. Push = poslala som túto históriu na GitHub.' V GitKrakene ukáž, že lokálna vetva je 'ahead' — má commit navyše. Daj push. Potom otvor repo na GitHube v prehliadači a ukáž, že zmena je tam. Aha-moment: teraz to vidia ostatní.">
+    <div class="kicker rise">Hands-on · 4</div>
+    <h2 class="rise d1"><span class="mono" style="color:var(--mint)">push</span> — pošlem to ostatným</h2>
+    <div class="lr rise d2">
+      <div class="node"><div class="ico">💻</div><div class="lbl">commit u teba</div></div>
+      <div class="pa push mono" style="font-size:1.6rem">push&nbsp;→</div>
+      <div class="node"><div class="ico">☁️</div><div class="lbl">teraz aj na GitHube</div></div>
+    </div>
+    <div class="sub rise d3">Po commite je zmena len lokálne. Push ju posunie do zdieľanej verzie.</div>
+  </section>
+
+  <!-- 14 DEMO PULL -->
+  <section class="slide" data-sec="Demo" data-notes="(~15 min) HANDS-ON: PULL. Priprav situáciu — ty (alebo druhý účet) zmeníš niečo na GitHube. Veta: 'Pull = stiahnem si nové commity z GitHubu do svojho lokálneho repozitára.' DÔLEŽITÉ rozlíšenie: pull NIE JE download súborov — je to stiahnutie commitov/histórie. Workflow: niekto zmenil remote → ja dám pull → mám to lokálne.">
+    <div class="kicker rise">Hands-on · 5</div>
+    <h2 class="rise d1"><span class="mono" style="color:var(--sky)">pull</span> — vezmem si zmeny ostatných</h2>
+    <div class="lr rise d2">
+      <div class="node"><div class="ico">☁️</div><div class="lbl">niekto zmenil GitHub</div></div>
+      <div class="pa pull mono" style="font-size:1.6rem">→&nbsp;pull</div>
+      <div class="node"><div class="ico">💻</div><div class="lbl">mám to u seba</div></div>
+    </div>
+    <div class="sub rise d3"><b style="color:var(--git)">Pozor:</b> pull nie je sťahovanie súborov — sťahuje commity (históriu).</div>
+  </section>
+
+  <!-- 15 WHOLE WORKFLOW -->
+  <section class="slide" data-sec="Súhrn" data-notes="Spoj všetko do jednej slučky. Klikaním rozsvecuj body: clone (mám projekt) → edit (upravím) → commit (uložím krok) → push (zdieľam) → pull (beriem zmeny ostatných) → a znova. Toto je celý dnešný kolobeh. Nechaj ich to zopakovať vlastnými slovami.">
+    <div class="kicker rise">Celý kolobeh</div>
+    <h2 class="rise d1">Toto je dnešný workflow</h2>
+    <div class="tl rise d2" id="bigtl">
+      <div class="axis"><div class="grown" id="grown"></div></div>
+    </div>
+    <div class="sub rise d3">Klikaj → os sa plní. clone · edit · commit · push · pull</div>
+  </section>
+
+  <!-- 16 GLOSSARY -->
+  <section class="slide" data-sec="Súhrn" data-notes="Slovníček 4 slovies — to je celá dnešná slovná zásoba. Nech si to zapamätajú: clone, commit, push, pull. Ak si zapamätajú len tieto štyri slová a čo robia, dnešok splnil účel.">
+    <div class="kicker rise">Štyri slovesá = celá dnešná slovná zásoba</div>
+    <div class="verbs rise d1">
+      <div class="verb"><b>clone</b><span>stiahnem si projekt z GitHubu na počítač</span></div>
+      <div class="verb"><b>commit</b><span>uložím krok do histórie (lokálne)</span></div>
+      <div class="verb"><b>push</b><span>pošlem svoje commity na GitHub</span></div>
+      <div class="verb"><b>pull</b><span>stiahnem si commity ostatných</span></div>
+    </div>
+  </section>
+
+  <!-- 17 NEXT -->
+  <section class="slide" data-sec="Ďalej" data-notes="Teaser workshopu 2. Dnes sme pracovali v jednej línii. Nabudúce: branching (vlastná pracovná línia, kde si bezpečne skúšaš zmeny), merge requesty (návrh zlúčenia späť) a riešenie konfliktov. Povzbuď ich — najťažšie (mentálny model) majú za sebou.">
+    <div class="kicker rise">Nabudúce · Workshop 2</div>
+    <h2 class="rise d1">Vetvy, merge requesty, tímová spolupráca</h2>
+    <div class="lead rise d2">Dnes sme išli v jednej línii. Nabudúce si otvoríme vlastné vetvy a naučíme sa ich bezpečne spájať.</div>
+  </section>
+
+  <!-- 18 CLOSE -->
+  <section class="slide" data-sec="Záver" data-notes="(~10 min) Zhrnutie + priestor na otázky. Spýtaj sa vlastnými slovami: Čo je commit? Rozdiel commit vs push? Čo je remote? Poďakuj. Pripomeň INSTALL.md a že wta-a-24 majú naklonované pre budúce cvičenie.">
+    <div class="kicker rise">Ďakujem 🎉</div>
+    <h1 class="rise d1">Otázky?</h1>
+    <div class="lead rise d2">Čo je commit? V čom sa líši od push? Čo je remote? — skús vlastnými slovami.</div>
+  </section>
+
+</div>
+
+<div class="hint">← → medzi slajdmi · S = poznámky · F = fullscreen</div>
+
+<div id="notes"><h4>Poznámky pre prezentujúcu</h4><div class="body" id="notesBody"></div></div>
+
+<div class="foot">
+  <span class="pgnum" id="pgnum">01 / 18</span>
+  <div class="spine" id="spine"></div>
+  <span class="brand">GIT · WTA-A-24</span>
+</div>
+
+<script>
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var spine = document.getElementById('spine');
+  var pgnum = document.getElementById('pgnum');
+  var notes = document.getElementById('notes');
+  var notesBody = document.getElementById('notesBody');
+  var i = 0, notesOn = false;
+
+  // build spine pips
+  var pips = slides.map(function(_, n){
+    var p = document.createElement('span'); p.className='pip';
+    p.style.left = (slides.length===1?0:(n/(slides.length-1))*100)+'%';
+    p.addEventListener('click', function(){ go(n); });
+    spine.appendChild(p);
+    var fill = null;
+    return p;
+  });
+  var fill = document.createElement('span'); fill.className='fill'; spine.appendChild(fill);
+
+  // big timeline interactive build
+  var bigStops = ['clone','edit','commit','push','pull'];
+  var bigStep = 0, bigEl = document.getElementById('bigtl'), grown = document.getElementById('grown');
+  function renderBig(){
+    if(!bigEl) return;
+    // clear old nodes
+    Array.prototype.slice.call(bigEl.querySelectorAll('.node2')).forEach(function(n){n.remove();});
+    bigStops.forEach(function(label, k){
+      var n = document.createElement('div'); n.className='node2'+(k<bigStep?' on':'');
+      n.style.left = (k/(bigStops.length-1))*100+'%';
+      n.innerHTML = '<b>'+label+'</b>';
+      bigEl.appendChild(n);
+    });
+    var w = bigStep<=1 ? 0 : ((bigStep-1)/(bigStops.length-1))*100;
+    grown.style.width = w+'%';
+  }
+
+  function render(){
+    slides.forEach(function(s,n){ s.classList.toggle('active', n===i); });
+    pips.forEach(function(p,n){ p.classList.remove('done','cur'); if(n<i)p.classList.add('done'); if(n===i)p.classList.add('cur'); });
+    fill.style.width = (slides.length===1?0:(i/(slides.length-1))*100)+'%';
+    pgnum.textContent = String(i+1).padStart(2,'0')+' / '+String(slides.length).padStart(2,'0');
+    notesBody.textContent = slides[i].getAttribute('data-notes')||'—';
+    if(slides[i].id==='') {}
+    // reset big timeline when entering its slide
+    if(slides[i].querySelector('#bigtl')){ bigStep=0; renderBig(); }
+  }
+  function go(n){ i=Math.max(0,Math.min(slides.length-1,n)); render(); }
+  function next(){
+    var cur = slides[i];
+    // interactive big timeline advances within the slide
+    if(cur.querySelector('#bigtl') && bigStep < bigStops.length){ bigStep++; renderBig(); return; }
+    go(i+1);
+  }
+  function prev(){
+    var cur = slides[i];
+    if(cur.querySelector('#bigtl') && bigStep>0){ bigStep--; renderBig(); return; }
+    go(i-1);
+  }
+
+  document.addEventListener('keydown', function(e){
+    if(e.key==='ArrowRight'||e.key===' '||e.key==='PageDown'){ e.preventDefault(); next(); }
+    else if(e.key==='ArrowLeft'||e.key==='PageUp'){ e.preventDefault(); prev(); }
+    else if(e.key==='Home'){ go(0); }
+    else if(e.key==='End'){ go(slides.length-1); }
+    else if(e.key==='s'||e.key==='S'){ notesOn=!notesOn; notes.classList.toggle('show',notesOn); }
+    else if(e.key==='f'||e.key==='F'){ if(!document.fullscreenElement){document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen();}else{document.exitFullscreen&&document.exitFullscreen();} }
+  });
+  // tap/click to advance (ignore clicks on pips)
+  document.getElementById('deck').addEventListener('click', function(e){ next(); });
+
+  render();
+</script>
