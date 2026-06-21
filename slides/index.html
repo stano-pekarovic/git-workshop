@@ -117,7 +117,7 @@
   .area .aname{font-weight:800; font-size:1.15rem; margin-bottom:.45rem}
   .area .adesc{color:var(--muted); font-size:.95rem; line-height:1.35}
   .amove{display:flex; align-items:center; justify-content:center; min-width:84px}
-  .amove .act{font-family:ui-monospace,Menlo,monospace; font-weight:700; color:var(--git); font-size:1rem; border:1px dashed var(--line); border-radius:999px; padding:.3em .8em}
+  .amove .act{font-family:ui-monospace,Menlo,monospace; font-weight:700; color:var(--git); font-size:1rem; border:1.5px dashed rgba(232,67,31,.55); border-radius:999px; padding:.3em .8em}
   @media(max-width:760px){ .areas{flex-direction:column; align-items:center} .amove{transform:rotate(90deg)} }
 
   /* ---- big timeline (workflow) ---- */
@@ -327,16 +327,16 @@
         <text x="380" y="74" text-anchor="middle" font-size="30">☁️</text>
         <text x="380" y="104" text-anchor="middle" fill="#2563EB" font-size="19" font-weight="700" font-family="ui-sans-serif,system-ui">GitHub</text>
         <text x="380" y="124" text-anchor="middle" fill="#8A93A0" font-size="12.5" font-family="ui-sans-serif,system-ui">vzdialené úložisko (remote)</text>
-        <!-- connectors left -->
-        <line x1="208" y1="300" x2="338" y2="138" stroke="#0E9F6E" stroke-width="2.4" marker-end="url(#amint)"/>
-        <line x1="318" y1="138" x2="188" y2="300" stroke="#2563EB" stroke-width="2.4" marker-end="url(#asky)"/>
-        <text x="223" y="214" fill="#0E9F6E" font-size="15" font-weight="700" font-family="ui-monospace,monospace" transform="rotate(-51 223 214)">push</text>
-        <text x="305" y="236" fill="#2563EB" font-size="15" font-weight="700" font-family="ui-monospace,monospace" transform="rotate(-51 305 236)">pull</text>
-        <!-- connectors right -->
-        <line x1="552" y1="300" x2="422" y2="138" stroke="#0E9F6E" stroke-width="2.4" marker-end="url(#amint)"/>
-        <line x1="442" y1="138" x2="572" y2="300" stroke="#2563EB" stroke-width="2.4" marker-end="url(#asky)"/>
-        <text x="537" y="214" fill="#0E9F6E" font-size="15" font-weight="700" font-family="ui-monospace,monospace" transform="rotate(51 537 214)">push</text>
-        <text x="455" y="236" fill="#2563EB" font-size="15" font-weight="700" font-family="ui-monospace,monospace" transform="rotate(51 455 236)">pull</text>
+        <!-- connectors left: push (up, mint) vpravo, pull (down, sky) vľavo -->
+        <line x1="235" y1="298" x2="350" y2="140" stroke="#0E9F6E" stroke-width="2.4" marker-end="url(#amint)"/>
+        <line x1="300" y1="140" x2="170" y2="298" stroke="#2563EB" stroke-width="2.4" marker-end="url(#asky)"/>
+        <text x="312" y="208" fill="#0E9F6E" font-size="15" font-weight="700" font-family="ui-monospace,monospace" transform="rotate(-54 312 208)">push</text>
+        <text x="206" y="232" fill="#2563EB" font-size="15" font-weight="700" font-family="ui-monospace,monospace" transform="rotate(-54 206 232)">pull</text>
+        <!-- connectors right: push (up, mint) vľavo, pull (down, sky) vpravo -->
+        <line x1="525" y1="298" x2="410" y2="140" stroke="#0E9F6E" stroke-width="2.4" marker-end="url(#amint)"/>
+        <line x1="460" y1="140" x2="590" y2="298" stroke="#2563EB" stroke-width="2.4" marker-end="url(#asky)"/>
+        <text x="448" y="208" fill="#0E9F6E" font-size="15" font-weight="700" font-family="ui-monospace,monospace" transform="rotate(54 448 208)">push</text>
+        <text x="556" y="232" fill="#2563EB" font-size="15" font-weight="700" font-family="ui-monospace,monospace" transform="rotate(54 556 232)">pull</text>
         <!-- local left -->
         <rect x="70" y="300" width="200" height="104" rx="16" fill="#FFFFFF" stroke="#CFC8B8" stroke-width="2"/>
         <text x="170" y="340" text-anchor="middle" font-size="28">💻</text>
