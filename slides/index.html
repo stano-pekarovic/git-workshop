@@ -84,6 +84,14 @@
   .pp .pa{display:flex; align-items:center; gap:.6rem; font-weight:800; font-family:ui-monospace,monospace}
   .pp .push{color:var(--mint)} .pp .pull{color:var(--sky)}
 
+  /* ---- cloud map (local vs remote) ---- */
+  .cloudmap{margin-top:1.6rem; width:100%; display:flex; justify-content:center}
+
+  /* ---- codebox (about-me task) ---- */
+  .codebox{margin-top:2.2rem; width:min(440px,90vw); text-align:left; border:1px solid var(--line); border-radius:12px; overflow:hidden; font-family:ui-monospace,Menlo,monospace}
+  .codebox .fname{background:var(--ink2); color:var(--muted); padding:.5em 1em; font-size:.85rem; border-bottom:1px solid var(--line)}
+  .codebox .line{padding:.35em 1em; color:#C9C3B6; font-size:clamp(.9rem,1.7vw,1.1rem)}
+
   /* ---- diff ---- */
   .diff{margin-top:2.2rem; width:min(620px,92vw); text-align:left; font-family:ui-monospace,Menlo,monospace; font-size:clamp(.85rem,1.7vw,1.1rem); border:1px solid var(--line); border-radius:12px; overflow:hidden}
   .diff div{padding:.45em 1em}
@@ -288,30 +296,60 @@
 
   <!-- 8 THREE LOCAL AREAS: working / staging / repository -->
   <section class="slide" data-sec="Model" data-notes="Tri miesta na tvojom počítači, ktorými zmena prejde, kým sa uloží do histórie. 1) PRACOVNÝ PRIEČINOK (working directory) — súbory, ktoré práve upravuješ. 2) PRÍPRAVA (staging area) — sem vyberieš, čo presne pôjde do najbližšieho commitu; môžeš commitnúť len časť zmien. 3) REPOZITÁR — história uložených commitov. Prechody: 'stage' = pridám zmenu do prípravy, 'commit' = uložím pripravené do histórie. V GitKrakene je to zaškrtnutie súboru (stage) a tlačidlo Commit. Nechaj to ľudské — netreba memorovať pojmy, dôležitý je tok.">
-    <div class="kicker rise">Tri miesta v gite</div>
+    <div class="kicker rise">Tri oblasti gitu</div>
     <h2 class="rise d1">Kadiaľ zmena prejde, kým sa uloží</h2>
     <div class="areas rise d2">
       <div class="area"><div class="aname">Pracovný priečinok</div><div class="adesc">súbory, ktoré práve upravuješ</div></div>
       <div class="amove"><span class="act mono">stage →</span></div>
-      <div class="area hot"><div class="aname" style="color:var(--git)">Príprava</div><div class="adesc">vyberieš, čo pôjde do commitu</div></div>
+      <div class="area hot"><div class="aname" style="color:var(--git)">Staging</div><div class="adesc">vyberieš, čo pôjde do commitu</div></div>
       <div class="amove"><span class="act mono">commit →</span></div>
       <div class="area mintb"><div class="aname" style="color:var(--mint)">Repozitár</div><div class="adesc">história uložených commitov</div></div>
     </div>
-    <div class="sub rise d3">upravím &nbsp;→&nbsp; vyberiem do prípravy (stage) &nbsp;→&nbsp; uložím do histórie (commit)</div>
+    <div class="sub rise d3">upravím &nbsp;→&nbsp; vyberiem do staging &nbsp;→&nbsp; uložím do histórie (commit)</div>
   </section>
 
   <!-- 9 LOCAL vs REMOTE -->
   <section class="slide" data-sec="Model" data-notes="Analógia knižnice (z osnovy): Lokálne repo je tvoj pracovný zošit na stole — robíš si doma poznámky. Remote repo na GitHube je spoločná verzia v knižnici. Keď chceš, aby tvoje poznámky videli ostatní → PUSH (pošlem do knižnice). Keď chceš ich zmeny → PULL (vezmem si z knižnice). Push aj pull = pohyb HISTÓRIE medzi tvojím PC a GitHubom.">
-    <div class="kicker rise">Lokálne vs. vzdialené</div>
-    <div class="lr rise d1">
-      <div class="node"><div class="ico">💻</div><div class="lbl">Tvoj počítač<small>pracovný zošit na stole</small></div></div>
-      <div class="pp rise d2">
-        <div class="pa push">push&nbsp;→</div>
-        <div class="pa pull">←&nbsp;pull</div>
-      </div>
-      <div class="node"><div class="ico">☁️</div><div class="lbl">GitHub<small>spoločná verzia v knižnici</small></div></div>
+    <div class="kicker rise">Lokálne vs. vzdialené úložisko</div>
+    <h2 class="rise d1" style="font-size:clamp(1.4rem,3.4vw,2.2rem); max-width:24ch">Jedna spoločná kópia v cloude, u každého kópia na počítači</h2>
+    <div class="cloudmap rise d2">
+      <svg viewBox="0 0 760 440" width="100%" style="max-width:720px" aria-hidden="true">
+        <defs>
+          <marker id="amint" markerWidth="9" markerHeight="9" refX="6" refY="3" orient="auto"><path d="M0 0l6 3-6 3z" fill="#5BD6A6"/></marker>
+          <marker id="asky" markerWidth="9" markerHeight="9" refX="6" refY="3" orient="auto"><path d="M0 0l6 3-6 3z" fill="#6AA9FF"/></marker>
+        </defs>
+        <!-- divider lokálne / vzdialené -->
+        <line x1="20" y1="168" x2="740" y2="168" stroke="#F05133" stroke-width="2" stroke-dasharray="8 7" opacity=".7"/>
+        <text x="734" y="158" text-anchor="end" fill="#8A93A0" font-size="13" font-family="ui-monospace,monospace">vzdialené ↑</text>
+        <text x="734" y="186" text-anchor="end" fill="#8A93A0" font-size="13" font-family="ui-monospace,monospace">lokálne ↓</text>
+        <!-- remote -->
+        <rect x="290" y="34" width="180" height="100" rx="16" fill="#161B22" stroke="#6AA9FF" stroke-width="2"/>
+        <text x="380" y="74" text-anchor="middle" font-size="30">☁️</text>
+        <text x="380" y="104" text-anchor="middle" fill="#6AA9FF" font-size="19" font-weight="700" font-family="ui-sans-serif,system-ui">GitHub</text>
+        <text x="380" y="124" text-anchor="middle" fill="#8A93A0" font-size="12.5" font-family="ui-sans-serif,system-ui">vzdialené úložisko (remote)</text>
+        <!-- connectors left -->
+        <line x1="208" y1="300" x2="338" y2="138" stroke="#5BD6A6" stroke-width="2.4" marker-end="url(#amint)"/>
+        <line x1="318" y1="138" x2="188" y2="300" stroke="#6AA9FF" stroke-width="2.4" marker-end="url(#asky)"/>
+        <text x="223" y="214" fill="#5BD6A6" font-size="15" font-weight="700" font-family="ui-monospace,monospace" transform="rotate(-51 223 214)">push</text>
+        <text x="305" y="236" fill="#6AA9FF" font-size="15" font-weight="700" font-family="ui-monospace,monospace" transform="rotate(-51 305 236)">pull</text>
+        <!-- connectors right -->
+        <line x1="552" y1="300" x2="422" y2="138" stroke="#5BD6A6" stroke-width="2.4" marker-end="url(#amint)"/>
+        <line x1="442" y1="138" x2="572" y2="300" stroke="#6AA9FF" stroke-width="2.4" marker-end="url(#asky)"/>
+        <text x="537" y="214" fill="#5BD6A6" font-size="15" font-weight="700" font-family="ui-monospace,monospace" transform="rotate(51 537 214)">push</text>
+        <text x="455" y="236" fill="#6AA9FF" font-size="15" font-weight="700" font-family="ui-monospace,monospace" transform="rotate(51 455 236)">pull</text>
+        <!-- local left -->
+        <rect x="70" y="300" width="200" height="104" rx="16" fill="#161B22" stroke="#3a4350" stroke-width="2"/>
+        <text x="170" y="340" text-anchor="middle" font-size="28">💻</text>
+        <text x="170" y="370" text-anchor="middle" fill="#F5F1E8" font-size="18" font-weight="700" font-family="ui-sans-serif,system-ui">Tvoj počítač</text>
+        <text x="170" y="390" text-anchor="middle" fill="#8A93A0" font-size="12.5" font-family="ui-sans-serif,system-ui">lokálne úložisko</text>
+        <!-- local right -->
+        <rect x="490" y="300" width="200" height="104" rx="16" fill="#161B22" stroke="#3a4350" stroke-width="2"/>
+        <text x="590" y="340" text-anchor="middle" font-size="28">👩‍💻</text>
+        <text x="590" y="370" text-anchor="middle" fill="#F5F1E8" font-size="18" font-weight="700" font-family="ui-sans-serif,system-ui">Kolegyňa</text>
+        <text x="590" y="390" text-anchor="middle" fill="#8A93A0" font-size="12.5" font-family="ui-sans-serif,system-ui">lokálne úložisko</text>
+      </svg>
     </div>
-    <div class="sub rise d3">push = pošlem svoje commity hore &nbsp;·&nbsp; pull = stiahnem si commity ostatných</div>
+    <div class="sub rise d3">push = pošlem svoje commity na GitHub &nbsp;·&nbsp; pull = stiahnem si zmeny ostatných</div>
   </section>
 
   <!-- 10 DEMO CLONE -->
@@ -322,9 +360,23 @@
     <div class="cue rise d3">→ prepni do GitKrakenu · repo <b class="mono">&nbsp;wta-a-24</b></div>
   </section>
 
-  <!-- 11 DEMO CHANGE + DIFF -->
-  <section class="slide" data-sec="Demo" data-notes="(~25 min na zmenu+commit) HANDS-ON: každá upraví about-me.md (Meno / Obľúbený nápoj / Jedna vec ktorú sa chcem naučiť). V GitKrakene ukáž: súbor sa objaví ako 'changed'. Vysvetli DIFF: porovnanie starej a novej verzie — zelené riadky pridané, červené odobrané/zmenené. Toto je presne to, čo Git 'vidí'.">
+  <!-- 11 DEMO: FIRST CHANGE + COMMIT -->
+  <section class="slide" data-sec="Demo" data-notes="(~25 min) HANDS-ON: prvá zmena + commit. Každá upraví about-me.md (Meno / Obľúbený nápoj / Jedna vec ktorú sa chcem naučiť). Potom v GitKrakene: vyber súbor do staging → napíš zmysluplnú commit message (napr. 'Add my introduction') → Commit. Ukáž, ako na časovej osi pribudne nový bod. Pripomeň: teraz je to uložené, ale STÁLE LEN na tvojom počítači.">
     <div class="kicker rise">Hands-on · 2</div>
+    <h2 class="rise d1">Prvá zmena a <span class="mono" style="color:var(--git)">commit</span></h2>
+    <div class="codebox rise d2">
+      <div class="fname">about-me.md</div>
+      <div class="line"># About me</div>
+      <div class="line">Meno:</div>
+      <div class="line">Obľúbený nápoj:</div>
+      <div class="line">Chcem sa naučiť:</div>
+    </div>
+    <div class="sub rise d3">uprav súbor &nbsp;→&nbsp; vyber do staging &nbsp;→&nbsp; napíš správu &nbsp;→&nbsp; commit (pribudne bod na osi)</div>
+  </section>
+
+  <!-- 12 DEMO: DIFF (po commite) -->
+  <section class="slide" data-sec="Demo" data-notes="HANDS-ON: diff — až po prvom commite. Uprav about-me.md znova. V GitKrakene sa súbor objaví ako 'changed' a Git ukáže DIFF voči poslednému commitu: zelené riadky = pridané, červené = odobrané/zmenené. Pointa: keď máš commit, Git ti presne ukáže, čo si odvtedy zmenila — to je tá história v akcii.">
+    <div class="kicker rise">Hands-on · 3</div>
     <h2 class="rise d1">Git vidí, <span style="color:var(--git)">čo si zmenila</span></h2>
     <div class="diff rise d2">
       <div class="ctx"># About me</div>
@@ -333,18 +385,7 @@
       <div class="ctx">Chcem sa naučiť:</div>
       <div class="add">Chcem sa naučiť: testovať API</div>
     </div>
-    <div class="sub rise d3">Diff = porovnanie verzií. Zelené = pridané, červené = odobrané/zmenené.</div>
-  </section>
-
-  <!-- 12 DEMO COMMIT -->
-  <section class="slide" data-sec="Demo" data-notes="HANDS-ON: COMMIT. V GitKrakene: vyber zmenu (čo ide do commitu), napíš zmysluplnú commit message (napr. 'Add my introduction'), vytvor commit. Ukáž, ako sa na časovej osi v GitKrakene objaví nový bod. Pripomeň: teraz je to uložené, ale STÁLE LEN na tvojom počítači.">
-    <div class="kicker rise">Hands-on · 3</div>
-    <h2 class="rise d1"><span class="mono" style="color:var(--git)">commit</span> — uložím krok do histórie</h2>
-    <div class="title-spine rise d2" style="margin-top:2.4rem">
-      <span class="dot"></span><span class="seg"></span><span class="dot"></span><span class="seg"></span>
-      <span class="dot" style="box-shadow:0 0 0 10px rgba(240,81,51,.18)"></span>
-    </div>
-    <div class="lead rise d3">Pribudol nový bod na osi. Zatiaľ ale len u teba na počítači.</div>
+    <div class="sub rise d3">Po commite Git ukáže rozdiel oproti poslednému uloženému stavu. Zelené = pridané, červené = zmenené.</div>
   </section>
 
   <!-- 13 DEMO PUSH -->

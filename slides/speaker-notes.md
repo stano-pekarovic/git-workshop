@@ -79,24 +79,24 @@ Najčastejší zmätok začiatočníkov — venuj tomu čas. Prejdi tri logá:
 
 ---
 
-## Slajd 9 — Tri miesta v gite *(model, ~5 min)*
-**Povedz:** Kým sa zmena uloží do histórie, prejde na tvojom počítači cez tri miesta:
+## Slajd 9 — Tri oblasti gitu *(model, ~5 min)*
+**Povedz:** Kým sa zmena uloží do histórie, prejde na tvojom počítači cez tri oblasti:
 1. **Pracovný priečinok** (working directory) — súbory, ktoré práve upravuješ.
-2. **Príprava** (staging area) — sem vyberieš, čo presne pôjde do najbližšieho commitu. Môžeš tak uložiť aj len časť zmien.
+2. **Staging** (staging area) — sem vyberieš, čo presne pôjde do najbližšieho commitu. Môžeš tak uložiť aj len časť zmien.
 3. **Repozitár** — história uložených commitov.
 
-**Prechody:** `stage` = pridám zmenu do prípravy · `commit` = uložím pripravené do histórie.
+**Prechody:** `stage` = pridám zmenu do staging · `commit` = uložím pripravené do histórie.
 
-**V GitKrakene:** stage = zaškrtnem súbor, commit = tlačidlo Commit. Netreba memorovať pojmy — dôležitý je **tok**: upravím → vyberiem do prípravy → uložím.
+**V GitKrakene:** stage = zaškrtnem súbor, commit = tlačidlo Commit. Netreba memorovať pojmy — dôležitý je **tok**: upravím → vyberiem do staging → uložím.
 
 ---
 
 ## Slajd 10 — Lokálne vs vzdialené *(model, ~3 min)*
-**Analógia knižnice:** Lokálne repo je tvoj **pracovný zošit na stole** — doma si robíš poznámky. Remote repo na GitHube je **spoločná verzia v knižnici**.
-- Chcem, aby moje poznámky videli ostatní → **push** (pošlem do knižnice).
-- Chcem zmeny od ostatných → **pull** (vezmem si z knižnice).
+**Ukáž diagram:** hore **GitHub** = vzdialené (remote) úložisko v cloude — jedna spoločná kópia projektu. Dole má **každá svoju lokálnu kópiu** na počítači (ty aj napr. kolegyňa).
+- Chcem, aby moje commity videli ostatní → **push** (pošlem ich na GitHub).
+- Chcem zmeny od ostatných → **pull** (stiahnem si ich z GitHubu).
 
-**Zdôrazni:** push aj pull = pohyb **histórie/commitov** medzi tvojím počítačom a GitHubom.
+**Zdôrazni:** push aj pull = pohyb **commitov (histórie)** medzi tvojím počítačom a GitHubom. (Mimochodom, `clone` na začiatku je presne to stiahnutie spoločnej kópie k sebe.)
 
 ---
 
@@ -113,7 +113,7 @@ Najčastejší zmätok začiatočníkov — venuj tomu čas. Prejdi tri logá:
 
 ---
 
-## Slajd 12 — DEMO: prvá zmena + diff *(hands-on, súčasť ~25 min bloku)*
+## Slajd 12 — DEMO: prvá zmena a commit *(hands-on, ~25 min blok)*
 **Úloha pre každú:** uprav `about-me.md`:
 ```
 # About me
@@ -121,21 +121,23 @@ Meno:
 Obľúbený nápoj:
 Jedna vec, ktorú sa chcem naučiť:
 ```
-V GitKrakene ukáž: súbor sa objaví ako **changed**.
+Potom v GitKrakene:
+1. Vyber súbor do **staging** (zaškrtni ho).
+2. Napíš **zmysluplnú** commit message, napr. `Add my introduction`.
+3. **Commit.**
 
-**Vysvetli diff:** *„Diff je porovnanie starej a novej verzie. Zelené riadky sú pridané, červené odobrané alebo zmenené."* Presne toto Git „vidí".
+Ukáž, ako sa na časovej osi objaví **nový bod**.
+
+**Pripomeň:** teraz je to uložené — ale **stále len na tvojom počítači**.
 
 ---
 
-## Slajd 13 — DEMO: commit *(hands-on)*
-V GitKrakene:
-1. Vyber zmenu (čo ide do commitu).
-2. Napíš **zmysluplnú** commit message, napr. `Add my introduction`.
-3. Vytvor commit.
+## Slajd 13 — DEMO: diff (až po commite) *(hands-on)*
+**Teraz, keď už máš prvý commit:** uprav `about-me.md` ešte raz (napr. doplň nápoj). V GitKrakene sa súbor objaví ako **changed** a Git ukáže **diff voči poslednému commitu**.
 
-Ukáž, ako sa na časovej osi v GitKrakene objaví **nový bod**.
+**Vysvetli diff:** *„Diff je porovnanie starej a novej verzie. Zelené riadky sú pridané, červené odobrané alebo zmenené."*
 
-**Pripomeň:** teraz je to uložené — ale **stále len na tvojom počítači**.
+**Pointa:** keď máš commit, Git ti presne ukáže, čo si **odvtedy** zmenila — to je tá história v akcii. (Preto má zmysel diff až teraz — bez commitu nie je voči čomu porovnávať.)
 
 ---
 
