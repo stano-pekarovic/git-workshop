@@ -200,7 +200,11 @@
     .slide{display:flex !important; position:relative !important; inset:auto !important; width:1280px; height:720px; page-break-after:always; break-after:page; opacity:1 !important; padding:60px 80px; overflow:hidden}
     .slide:last-child{page-break-after:auto}
     .foot,#notes{display:none}
-    .vnode,.pile div,.rise{opacity:1 !important; transform:none !important; animation:none !important}
+    *{animation:none !important}
+    .vnode,.pile div{opacity:1 !important}
+    .rise{opacity:1 !important; transform:none !important}
+    .areas{flex-direction:row !important; flex-wrap:nowrap !important}
+    .amove{transform:none !important}
   }
 </style>
 
