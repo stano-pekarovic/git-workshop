@@ -161,7 +161,6 @@
   #notes.show{display:block}
   #notes h4{color:var(--git); font-size:.78rem; letter-spacing:.2em; text-transform:uppercase; margin-bottom:.6rem}
   #notes .body{color:#3F4650; font-size:.96rem; line-height:1.5; white-space:pre-wrap; max-width:90ch}
-  .hint{position:fixed; top:14px; right:16px; color:var(--muted); font-size:.72rem; font-family:ui-monospace,monospace; z-index:6; opacity:.6}
 
   /* ---- presenter intro ---- */
   .intro{display:flex; align-items:center; gap:clamp(1.6rem,4vw,3.4rem); margin-top:1rem; flex-wrap:wrap; justify-content:center; text-align:left}
@@ -194,7 +193,7 @@
   @media (prefers-reduced-motion: reduce){
     *{animation:none !important; transition:none !important}
   }
-  @media print{ body{overflow:visible} .slide{display:flex; position:relative; page-break-after:always; min-height:100vh} .foot,#notes,.hint{display:none} }
+  @media print{ body{overflow:visible} .slide{display:flex; position:relative; page-break-after:always; min-height:100vh} .foot,#notes{display:none} }
 </style>
 
 <div class="deck" id="deck">
@@ -489,7 +488,6 @@
 
 </div>
 
-<div class="hint">← → medzi slajdmi · S = poznámky · F = fullscreen</div>
 
 <div id="notes"><h4>Poznámky pre prezentujúcu</h4><div class="body" id="notesBody"></div></div>
 
