@@ -193,7 +193,15 @@
   @media (prefers-reduced-motion: reduce){
     *{animation:none !important; transition:none !important}
   }
-  @media print{ body{overflow:visible} .slide{display:flex; position:relative; page-break-after:always; min-height:100vh} .foot,#notes{display:none} }
+  @media print{
+    @page{ size:1280px 720px; margin:0 }
+    html,body{overflow:visible; height:auto}
+    .deck{display:block !important; position:static !important}
+    .slide{display:flex !important; position:relative !important; inset:auto !important; width:1280px; height:720px; page-break-after:always; break-after:page; opacity:1 !important; padding:60px 80px; overflow:hidden}
+    .slide:last-child{page-break-after:auto}
+    .foot,#notes{display:none}
+    .vnode,.pile div,.rise{opacity:1 !important; transform:none !important; animation:none !important}
+  }
 </style>
 
 <div class="deck" id="deck">
@@ -568,4 +576,5 @@
   document.getElementById('deck').addEventListener('click', function(e){ next(); });
 
   render();
+  renderBig();  // populate daily-cycle timeline nodes so they appear in print/PDF
 </script>
