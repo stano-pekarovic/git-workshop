@@ -1,4 +1,4 @@
-<title>Git v tíme</title>
+<title>Spolupráca cez Git</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <style>
   :root{
@@ -65,6 +65,17 @@
 
   .fork{margin-top:2rem; width:100%; display:flex; justify-content:center}
 
+  /* gitflow animation — base state is the FINAL (visible) state so print/PDF shows it;
+     animation replays from hidden when the slide becomes active */
+  .gf-line{stroke-dasharray:1; stroke-dashoffset:0}
+  .gf-dot,.gf-lbl{opacity:1}
+  .slide.active .gf-line{animation:gfdraw .9s ease both}
+  .slide.active .gf-dot{animation:gfpop .4s ease both}
+  .slide.active .gf-lbl{animation:gffade .5s ease both}
+  @keyframes gfdraw{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
+  @keyframes gfpop{from{opacity:0}to{opacity:1}}
+  @keyframes gffade{from{opacity:0}to{opacity:1}}
+
   .prbox{margin-top:2.2rem; width:min(560px,92vw); text-align:left; border:1px solid var(--line); border-radius:14px; overflow:hidden; background:var(--ink2)}
   .prbox .prhead{display:flex; align-items:center; gap:.6rem; padding:.9em 1.2em; border-bottom:1px solid var(--line); flex-wrap:wrap}
   .prbox .prtag{font-family:ui-monospace,monospace; font-weight:700; color:var(--sky); background:rgba(37,99,235,.1); padding:.12em .6em; border-radius:6px; font-size:.9rem}
@@ -128,7 +139,7 @@
   <!-- 1 TITLE -->
   <section class="slide" data-sec="Úvod" data-notes="Vitajte späť na druhom workshope. Minule sme zvládli základný workflow (clone, commit, push, pull) a videli, že keď dvaja menia rôzne súbory, git ich spojí bez problému. Dnes nadviažeme: čo keď meníte to isté miesto? A ako si v tíme nešliapať po prácach — vetvy, merge, pull requesty. Drž rovnaký pokojný tón ako minule.">
     <div class="kicker rise">Workshop 2 · WTA-A-24</div>
-    <h1 class="rise d1">Git <span class="ac">v tíme</span></h1>
+    <h1 class="rise d1">Spolupráca<br><span class="ac">cez Git</span></h1>
     <div class="title-spine rise d2"><span class="dot"></span><span class="seg"></span><span class="dot"></span><span class="seg"></span><span class="dot"></span></div>
     <div class="sub rise d3">Aj Ty v IT &nbsp;•&nbsp; Stano Pekarovič</div>
   </section>
@@ -215,6 +226,36 @@
       <div class="place remote"><div class="t" style="color:var(--sky)">feature vetva</div><div class="d">moja pracovná línia<br>nové commity idú sem</div></div>
     </div>
     <div class="sub rise d3">Názov podľa obsahu: <span class="mono">add-about-page</span>, <span class="mono">fix-header-typo</span></div>
+  </section>
+
+  <!-- 8b GITFLOW ANIMATION -->
+  <section class="slide" data-sec="Vetvy" data-notes="Vizuálne zhrnutie životného cyklu vetvy — nechaj animáciu dobehnúť (~3,5s). Z main sa odbočí vetva, na nej pribúdajú commity, main medzitým beží ďalej, a keď je práca hotová, vetva sa zlúči späť do main. Toto je celý príbeh dnešného dňa v jednom obrázku. Merge a pull request si hneď rozoberieme; teraz si najprv vytvorenie vetvy vyskúšame.">
+    <div class="kicker rise">Životný cyklus vetvy</div>
+    <h2 class="rise d1">Odbočím, commitnem, <span style="color:var(--mint)">zlúčim späť</span></h2>
+    <div class="fork rise d2">
+      <svg viewBox="0 0 900 280" width="100%" style="max-width:840px" aria-hidden="true">
+        <!-- main line -->
+        <path class="gf-line" pathLength="1" d="M40 200 L860 200" fill="none" stroke="#E8431F" stroke-width="3" style="animation-delay:0s"/>
+        <!-- branch line -->
+        <path class="gf-line" pathLength="1" d="M200 200 C 260 200 270 100 320 100 L 560 100" fill="none" stroke="#2563EB" stroke-width="3" style="animation-delay:1s"/>
+        <!-- merge line back to main -->
+        <path class="gf-line" pathLength="1" d="M560 100 C 620 100 630 200 680 200" fill="none" stroke="#0E9F6E" stroke-width="3" style="animation-delay:2.2s"/>
+        <!-- main commits -->
+        <circle class="gf-dot" cx="90" cy="200" r="9" fill="#E8431F" style="animation-delay:.3s"/>
+        <circle class="gf-dot" cx="200" cy="200" r="9" fill="#E8431F" style="animation-delay:.7s"/>
+        <circle class="gf-dot" cx="820" cy="200" r="9" fill="#E8431F" style="animation-delay:3.2s"/>
+        <!-- feature commits -->
+        <circle class="gf-dot" cx="400" cy="100" r="9" fill="#2563EB" style="animation-delay:1.5s"/>
+        <circle class="gf-dot" cx="500" cy="100" r="9" fill="#2563EB" style="animation-delay:1.9s"/>
+        <!-- merge commit -->
+        <circle class="gf-dot" cx="680" cy="200" r="11" fill="#0E9F6E" style="animation-delay:2.9s"/>
+        <!-- labels -->
+        <text class="gf-lbl" x="40" y="235" fill="#E8431F" font-size="15" font-weight="700" font-family="ui-monospace,monospace" style="animation-delay:.3s">main</text>
+        <text class="gf-lbl" x="330" y="80" fill="#2563EB" font-size="15" font-weight="700" font-family="ui-monospace,monospace" style="animation-delay:1.5s">feature vetva</text>
+        <text class="gf-lbl" x="680" y="240" text-anchor="middle" fill="#0E9F6E" font-size="14" font-weight="700" font-family="ui-monospace,monospace" style="animation-delay:2.9s">merge</text>
+      </svg>
+    </div>
+    <div class="sub rise d3">main beží ďalej · vetva si žije svoj život · na konci sa vráti do main</div>
   </section>
 
   <!-- 9 DEMO branch -->
@@ -338,7 +379,7 @@
 <div id="notes"><h4>Poznámky pre prezentujúcu</h4><div class="body" id="notesBody"></div></div>
 
 <div class="foot">
-  <span class="pgnum" id="pgnum">01 / 18</span>
+  <span class="pgnum" id="pgnum">01 / 19</span>
   <div class="spine" id="spine"></div>
   <span class="brand">GIT · WTA-A-24</span>
 </div>
