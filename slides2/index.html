@@ -1,0 +1,443 @@
+<title>Git — vetvenie a spolupráca</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>
+  :root{
+    --ink:#F6F2E9; --ink2:#FFFFFF; --paper:#1C2127; --muted:#6B7280;
+    --git:#E8431F; --mint:#0E9F6E; --sky:#2563EB; --line:#E4DDCD;
+    --slot: clamp(1rem, 2.2vw, 1.6rem);
+  }
+  *{box-sizing:border-box; margin:0; padding:0}
+  html,body{height:100%}
+  body{
+    background:var(--ink); color:var(--paper);
+    font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    overflow:hidden; -webkit-font-smoothing:antialiased;
+  }
+  .deck{position:fixed; inset:0; display:flex; align-items:center; justify-content:center}
+
+  .slide{
+    position:absolute; inset:0;
+    display:none; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center; padding:6vh 7vw 14vh;
+    opacity:0; transition:opacity .45s ease;
+  }
+  .slide.active{display:flex; opacity:1}
+  .slide.active .rise{animation:rise .55s cubic-bezier(.2,.7,.2,1) both}
+  .slide.active .rise.d1{animation-delay:.08s}
+  .slide.active .rise.d2{animation-delay:.18s}
+  .slide.active .rise.d3{animation-delay:.30s}
+  @keyframes rise{from{opacity:0; transform:translateY(18px)}to{opacity:1; transform:none}}
+
+  .kicker{font-size:.82rem; letter-spacing:.28em; text-transform:uppercase; color:var(--git); font-weight:700; margin-bottom:1.4rem}
+  h1{font-size:clamp(2.2rem,7vw,5.4rem); line-height:1.02; font-weight:800; letter-spacing:-.02em}
+  h1 .ac{color:var(--git)}
+  h2{font-size:clamp(1.7rem,4.6vw,3.3rem); line-height:1.06; font-weight:800; letter-spacing:-.015em; max-width:18ch}
+  .lead{font-size:clamp(1.05rem,2.1vw,1.5rem); color:#3F4650; max-width:32ch; margin-top:1.4rem; line-height:1.4}
+  .sub{color:var(--muted); font-size:clamp(.95rem,1.7vw,1.2rem); margin-top:1.1rem; letter-spacing:.02em}
+  .mono{font-family:ui-monospace,Menlo,Consolas,monospace}
+
+  .title-spine{display:flex; align-items:center; gap:0; margin-top:3.2rem}
+  .title-spine .dot{width:16px; height:16px; border-radius:50%; background:var(--git); box-shadow:0 0 0 6px rgba(240,81,51,.16)}
+  .title-spine .seg{width:54px; height:3px; background:linear-gradient(90deg,var(--git),rgba(240,81,51,.25))}
+
+  .flow{display:flex; flex-wrap:wrap; gap:.7rem; justify-content:center; margin-top:2.2rem}
+  .chip{border:1.5px solid var(--line); border-radius:999px; padding:.55em 1.1em; font-weight:700; font-size:clamp(.95rem,1.9vw,1.3rem); background:var(--ink2)}
+  .chip .mono{color:var(--git)}
+  .arrow{align-self:center; color:var(--muted); font-size:1.4rem}
+
+  .verbs{display:grid; gap:1rem; margin-top:2.4rem; width:min(760px,92vw); text-align:left}
+  .verb{display:grid; grid-template-columns:auto 1fr; gap:1.1rem; align-items:baseline; padding:1rem 1.2rem; border:1px solid var(--line); border-radius:14px; background:var(--ink2)}
+  .verb b{font-family:ui-monospace,Menlo,monospace; color:var(--git); font-size:1.25rem}
+  .verb span{color:#3F4650; font-size:clamp(.95rem,1.7vw,1.15rem)}
+
+  /* recall questions */
+  .qs{display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-top:2.2rem; width:min(820px,94vw); text-align:left}
+  @media(max-width:620px){.qs{grid-template-columns:1fr}}
+  .q{padding:1.1rem 1.3rem; border:1px solid var(--line); border-radius:14px; background:var(--ink2); font-size:clamp(1rem,1.9vw,1.25rem); font-weight:700}
+  .q span{display:block; margin-top:.4rem; color:var(--muted); font-weight:500; font-size:.92rem}
+
+  .lead2{font-size:clamp(1.05rem,2.1vw,1.45rem); color:#3F4650; max-width:34ch; margin-top:1.4rem; line-height:1.45}
+
+  /* branch / merge diagram */
+  .fork{margin-top:2rem; width:100%; display:flex; justify-content:center}
+
+  /* pull request mock */
+  .prbox{margin-top:2.2rem; width:min(560px,92vw); text-align:left; border:1px solid var(--line); border-radius:14px; overflow:hidden; background:var(--ink2)}
+  .prbox .prhead{display:flex; align-items:center; gap:.6rem; padding:.9em 1.2em; border-bottom:1px solid var(--line); flex-wrap:wrap}
+  .prbox .prtag{font-family:ui-monospace,monospace; font-weight:700; color:var(--sky); background:rgba(37,99,235,.1); padding:.12em .6em; border-radius:6px; font-size:.9rem}
+  .prbox .prtitle{font-weight:800; font-size:1.05rem; padding:.7em 1.2em .2em}
+  .prbox .prmeta{color:var(--muted); font-size:.9rem; padding:0 1.2em .9em}
+  .prbox .prbtn{margin:0 1.2em 1.1em; display:inline-block; background:var(--mint); color:#fff; font-weight:800; padding:.5em 1.1em; border-radius:8px; font-size:.95rem}
+
+  /* diff (reused) + conflict markers */
+  .diff{margin-top:2.2rem; width:min(620px,92vw); text-align:left; font-family:ui-monospace,Menlo,monospace; font-size:clamp(.85rem,1.7vw,1.08rem); border:1px solid var(--line); border-radius:12px; overflow:hidden}
+  .diff div{padding:.45em 1em}
+  .diff .ctx{color:#3F4650; background:var(--ink2)}
+  .diff .mark{color:var(--muted); background:#F1ECE0; font-weight:700}
+  .diff .ours{color:#0E7A52; background:rgba(91,214,166,.14)}
+  .diff .theirs{color:#2563EB; background:rgba(37,99,235,.12)}
+
+  /* good practices (reused) */
+  .gp{display:grid; gap:.7rem; margin-top:2.2rem; width:min(740px,92vw); text-align:left}
+  .gpi{display:grid; grid-template-columns:auto 1fr; gap:.9rem; align-items:baseline; padding:.85rem 1.2rem; border:1px solid var(--line); border-radius:12px; background:var(--ink2)}
+  .gpi::before{content:"✓"; color:var(--mint); font-weight:800; font-size:1.1rem}
+  .gpi b{font-size:clamp(1rem,1.9vw,1.2rem)}
+  .gpi span{grid-column:2; color:var(--muted); font-size:.92rem}
+
+  /* cue */
+  .cue{margin-top:2.4rem; display:inline-flex; align-items:center; gap:.7rem; border:1.5px dashed var(--git); color:var(--git); border-radius:999px; padding:.6em 1.3em; font-weight:800; letter-spacing:.02em}
+  .cue b{font-family:ui-monospace,monospace}
+
+  /* big timeline (team workflow) */
+  .tl{position:relative; width:min(960px,94vw); margin-top:3rem; height:120px}
+  .tl .axis{position:absolute; top:50%; left:0; right:0; height:3px; background:var(--line)}
+  .tl .axis .grown{position:absolute; left:0; top:0; height:100%; width:0; background:var(--git); transition:width .6s ease}
+  .tl .node2{position:absolute; top:50%; transform:translate(-50%,-50%); width:18px; height:18px; border-radius:50%; background:var(--ink); border:3px solid var(--git); transition:.4s}
+  .tl .node2 b{position:absolute; top:-2.2rem; left:50%; transform:translateX(-50%); font-family:ui-monospace,monospace; font-size:.74rem; color:var(--muted); white-space:nowrap}
+  .tl .node2.on{background:var(--git); box-shadow:0 0 0 6px rgba(240,81,51,.18)}
+
+  /* foot / progress */
+  .foot{position:fixed; left:0; right:0; bottom:0; height:54px; display:flex; align-items:center; padding:0 max(3vw,18px); gap:14px; z-index:5}
+  .spine{flex:1; position:relative; height:2px; background:var(--line)}
+  .spine .fill{position:absolute; left:0; top:0; height:100%; background:var(--git); width:0; transition:width .4s ease}
+  .spine .pip{position:absolute; top:50%; transform:translate(-50%,-50%); width:7px; height:7px; border-radius:50%; background:var(--line); transition:.3s}
+  .spine .pip.done{background:var(--git)}
+  .spine .pip.cur{background:var(--git); box-shadow:0 0 0 4px rgba(240,81,51,.2); width:9px; height:9px}
+  .pgnum{color:var(--muted); font-size:.8rem; font-family:ui-monospace,monospace; min-width:70px}
+  .brand{color:var(--muted); font-size:.8rem; font-weight:700; letter-spacing:.12em}
+
+  /* presenter notes */
+  #notes{position:fixed; left:0; right:0; bottom:54px; max-height:42vh; overflow:auto; background:#FFFFFF; border-top:2px solid var(--git); padding:1.2rem max(4vw,20px); display:none; z-index:8}
+  #notes.show{display:block}
+  #notes h4{color:var(--git); font-size:.78rem; letter-spacing:.2em; text-transform:uppercase; margin-bottom:.6rem}
+  #notes .body{color:#3F4650; font-size:.96rem; line-height:1.5; white-space:pre-wrap; max-width:90ch}
+
+  @media (prefers-reduced-motion: reduce){ *{animation:none !important; transition:none !important} }
+  @media print{
+    @page{ size:1280px 720px; margin:0 }
+    html,body{overflow:visible; height:auto}
+    .deck{display:block !important; position:static !important}
+    .slide{display:flex !important; position:relative !important; inset:auto !important; width:1280px; height:720px; page-break-after:always; break-after:page; opacity:1 !important; padding:60px 80px; overflow:hidden}
+    .slide:last-child{page-break-after:auto}
+    .foot,#notes{display:none}
+    *{animation:none !important}
+    .rise{opacity:1 !important; transform:none !important}
+    .qs{grid-template-columns:1fr 1fr !important}
+  }
+</style>
+
+<div class="deck" id="deck">
+
+  <!-- 1 TITLE -->
+  <section class="slide" data-sec="Úvod" data-notes="Vitajte späť na druhom workshope. Minule sme zvládli základný workflow (clone, commit, push, pull). Dnes pridáme tímový rozmer: vetvenie, pull requesty, merge a konflikty. Drž rovnaký pokojný tón ako minule.">
+    <div class="kicker rise">Workshop 2 · WTA-A-24</div>
+    <h1 class="rise d1">Vetvenie a<br><span class="ac">spolupráca</span></h1>
+    <div class="title-spine rise d2"><span class="dot"></span><span class="seg"></span><span class="dot"></span><span class="seg"></span><span class="dot"></span></div>
+    <div class="sub rise d3">Aj Ty v IT &nbsp;•&nbsp; Stano Pekarovič</div>
+  </section>
+
+  <!-- 2 RECALL -->
+  <section class="slide" data-sec="Zopakovanie" data-notes="(~10 min) Rýchle zopakovanie z minula. Nechaj ich odpovedať vlastnými slovami, neodpovedaj hneď sama. Správne odpovede: commit = uložený krok v histórii (+ popis); commit vs push = commit je lokálne, push pošle na GitHub; remote = vzdialené úložisko (GitHub); pull = stiahnem commity ostatných.">
+    <div class="kicker rise">Pamätáte si z minula?</div>
+    <h2 class="rise d1">Rýchle zopakovanie</h2>
+    <div class="qs rise d2">
+      <div class="q">Čo je commit?<span>uložený krok + popis</span></div>
+      <div class="q">commit vs push?<span>lokálne vs. na GitHub</span></div>
+      <div class="q">Čo je remote?<span>vzdialené úložisko</span></div>
+      <div class="q">Čo robí pull?<span>stiahne zmeny ostatných</span></div>
+    </div>
+    <div class="sub rise d3">Skús odpovedať vlastnými slovami — potom si to spoločne overíme.</div>
+  </section>
+
+  <!-- 3 AGENDA -->
+  <section class="slide" data-sec="Úvod" data-notes="Predstav, čo dnes pridáme nad rámec základov: vetvy (branch), commity na vetve, pull request, merge a riešenie konfliktov. Na konci spojíme do tímového workflowu. Cieľ: vedieť bezpečne pracovať vo viacerých naraz.">
+    <div class="kicker rise">Čo dnes pridáme</div>
+    <h2 class="rise d1">Od jednej línie k <span style="color:var(--git)">tímovej spolupráci</span></h2>
+    <div class="flow rise d2">
+      <span class="chip"><span class="mono">branch</span></span><span class="arrow">→</span>
+      <span class="chip"><span class="mono">commit</span></span><span class="arrow">→</span>
+      <span class="chip"><span class="mono">push</span></span><span class="arrow">→</span>
+      <span class="chip">pull request</span><span class="arrow">→</span>
+      <span class="chip"><span class="mono">merge</span></span>
+    </div>
+    <div class="sub rise d3">A po ceste si ukážeme, čo je konflikt a ako ho vyriešiť.</div>
+  </section>
+
+  <!-- 4 PROBLEM: why not main -->
+  <section class="slide" data-sec="Vetvy" data-notes="Motivácia pre vetvy. Minule sme pracovali priamo v jednej línii (main). To je fajn, kým si sama. Ale v tíme: ak všetci píšu naraz do tej istej spoločnej verzie, ľahko si navzájom rozbijú prácu alebo pushnú nedokončené veci. Chceme bezpečné miesto, kde si svoju zmenu spravím a doladím, kým ju pridám k spoločnej verzii.">
+    <div class="kicker rise">Prečo nie všetko priamo do main</div>
+    <h2 class="rise d1">Spoločná verzia má ostať <span style="color:var(--git)">stabilná</span></h2>
+    <div class="lead2 rise d2">Keď do nej píšu všetci naraz, ľahko si navzájom rozbijú prácu alebo tam pristane niečo nedokončené. Potrebujeme bezpečný priestor, kde si zmenu spravíme a doladíme.</div>
+  </section>
+
+  <!-- 5 BRANCH = safe line -->
+  <section class="slide" data-sec="Vetvy" data-notes="(~20 min) Kľúčová časť. Mentálny model: main je oficiálna spoločná verzia. Keď chcem skúsiť novú vec, neurobím to priamo v nej — odbočím si vlastnú vetvu (branch), akúsi paralelnú časovú os. Tam si pracujem bez toho, aby som zasiahla main. Keď je hotovo, navrhnem zlúčenie späť. Technickejšie (len ak treba): branch je pomenovaný ukazovateľ na commit; nové commity sa pridávajú zaň.">
+    <div class="kicker rise">Branch (vetva)</div>
+    <h2 class="rise d1">Vlastná <span style="color:var(--sky)">bezpečná línia</span> na zmenu</h2>
+    <div class="fork rise d2">
+      <svg viewBox="0 0 760 210" width="100%" style="max-width:720px" aria-hidden="true">
+        <!-- main line -->
+        <line x1="40" y1="150" x2="720" y2="150" stroke="#E8431F" stroke-width="3"/>
+        <circle cx="110" cy="150" r="9" fill="#E8431F"/><circle cx="210" cy="150" r="9" fill="#E8431F"/>
+        <circle cx="500" cy="150" r="9" fill="#E8431F"/><circle cx="640" cy="150" r="9" fill="#E8431F"/>
+        <text x="700" y="180" text-anchor="end" fill="#E8431F" font-size="15" font-weight="700" font-family="ui-monospace,monospace">main</text>
+        <!-- branch -->
+        <path d="M210 150 C 270 150 280 70 340 70 L 560 70" fill="none" stroke="#2563EB" stroke-width="3"/>
+        <circle cx="400" cy="70" r="9" fill="#2563EB"/><circle cx="500" cy="70" r="9" fill="#2563EB"/>
+        <text x="340" y="52" fill="#2563EB" font-size="15" font-weight="700" font-family="ui-monospace,monospace">feature vetva</text>
+      </svg>
+    </div>
+    <div class="sub rise d3">main = oficiálna verzia · vetva = moja paralelná línia, kde bezpečne robím</div>
+  </section>
+
+  <!-- 6 BRANCH technically -->
+  <section class="slide" data-sec="Vetvy" data-notes="Doplň technické, ale ľudsky: main je stabilná spoločná vetva. Feature branch je miesto, kde robím svoju konkrétnu zmenu. Nové commity idú na moju vetvu — main sa medzitým nemení. Vetva je vlastne len pomenovaný ukazovateľ na commit, ale to netreba memorovať.">
+    <div class="kicker rise">Dve vetvy, dva účely</div>
+    <div class="places rise d1" style="margin-top:1.4rem">
+      <div class="place local"><div class="t" style="color:var(--git)">main</div><div class="d">stabilná spoločná verzia<br>do nej nepracujem priamo</div></div>
+      <div class="place remote"><div class="t" style="color:var(--sky)">feature vetva</div><div class="d">moja pracovná línia<br>nové commity idú sem</div></div>
+    </div>
+    <div class="sub rise d3">Kým robím na vetve, main stojí v bezpečí.</div>
+  </section>
+
+  <!-- 7 branch names -->
+  <section class="slide" data-sec="Vetvy" data-notes="Krátko: vetva nech má výstižný názov podľa toho, čo robí. Ľahšie sa potom v tíme orientuje, kto na čom pracuje.">
+    <div class="kicker rise">Ako pomenovať vetvu</div>
+    <h2 class="rise d1">Názov = čo na vetve robím</h2>
+    <div class="flow rise d2">
+      <span class="chip"><span class="mono">add-about-page</span></span>
+      <span class="chip"><span class="mono">fix-header-typo</span></span>
+      <span class="chip"><span class="mono">update-contact-info</span></span>
+    </div>
+    <div class="sub rise d3">Krátko, výstižne, bez diakritiky a medzier.</div>
+  </section>
+
+  <!-- 8 DEMO create branch -->
+  <section class="slide" data-sec="Demo" data-notes="(~20 min) HANDS-ON: vytvorenie vetvy. Prepni do GitKrakenu. Najprv si daj pull na main (nech máš najnovšie). Potom: pravý klik na main → Create branch here, alebo tlačidlo Branch. Pomenuj ju napr. add-&lt;tvoje-meno&gt;. Každá si vytvorí vlastnú vetvu v repe wta-a-24.">
+    <div class="kicker rise">Hands-on · 1</div>
+    <h2 class="rise d1">Vytvor si vetvu</h2>
+    <div class="lead2 rise d2">V GitKrakene: na <b class="mono">main</b> daj najprv pull, potom <b>Branch</b> → pomenuj napr. <b class="mono">add-tvojemeno</b>.</div>
+    <div class="cue rise d3">→ prepni do GitKrakenu · repo <b>&nbsp;wta-a-24</b></div>
+  </section>
+
+  <!-- 9 DEMO commit on branch -->
+  <section class="slide" data-sec="Demo" data-notes="HANDS-ON: commit na vetve. Uprav súbor (napr. pridaj riadok do about-me.md), stage, commit — presne ako minule. Ukáž v grafe GitKrakenu, že tvoja vetva sa posunula o nový commit dopredu, zatiaľ čo main stojí na mieste. Potom pushni vetvu na GitHub (Push) — vznikne tam tvoja vetva.">
+    <div class="kicker rise">Hands-on · 2</div>
+    <h2 class="rise d1">Commitni na vetve, potom <span class="mono" style="color:var(--mint)">push</span></h2>
+    <div class="fork rise d2">
+      <svg viewBox="0 0 760 200" width="100%" style="max-width:700px" aria-hidden="true">
+        <line x1="40" y1="150" x2="430" y2="150" stroke="#E8431F" stroke-width="3"/>
+        <circle cx="110" cy="150" r="9" fill="#E8431F"/><circle cx="210" cy="150" r="9" fill="#E8431F"/>
+        <text x="120" y="182" fill="#E8431F" font-size="15" font-weight="700" font-family="ui-monospace,monospace">main (stojí)</text>
+        <path d="M210 150 C 270 150 280 70 340 70 L 700 70" fill="none" stroke="#2563EB" stroke-width="3"/>
+        <circle cx="400" cy="70" r="9" fill="#2563EB"/><circle cx="500" cy="70" r="9" fill="#2563EB"/><circle cx="600" cy="70" r="9" fill="#2563EB"/>
+        <text x="430" y="52" fill="#2563EB" font-size="15" font-weight="700" font-family="ui-monospace,monospace">moja vetva (rastie)</text>
+      </svg>
+    </div>
+    <div class="sub rise d3">Nové commity idú na vetvu. main sa nemení.</div>
+  </section>
+
+  <!-- 10 PULL REQUEST -->
+  <section class="slide" data-sec="Pull request" data-notes="(~25 min) Pull request (PR) = návrh: 'prosím, zlúčte moju vetvu do main'. Je to miesto na GitHube, kde ostatní vidia tvoje zmeny, môžu ich okomentovať, navrhnúť úpravy a schváliť. Nie je to len tlačidlo na zlúčenie — je to priestor na spätnú väzbu pred tým, než sa zmena dostane do spoločnej verzie.">
+    <div class="kicker rise">Pull request (PR)</div>
+    <h2 class="rise d1">„Zlúčte moju vetvu do <span style="color:var(--git)">main</span>"</h2>
+    <div class="prbox rise d2">
+      <div class="prhead"><span class="prtag">add-stano</span> <span class="arrow" style="font-size:1rem">→</span> <span class="prtag" style="color:var(--git);background:rgba(232,67,31,.1)">main</span></div>
+      <div class="prtitle">Add my introduction</div>
+      <div class="prmeta">1 commit · navrhuje Stano · čaká na review</div>
+      <div class="prbtn">Merge pull request</div>
+    </div>
+    <div class="sub rise d3">Miesto, kde tím vidí zmenu, okomentuje ju a schváli — pred zlúčením.</div>
+  </section>
+
+  <!-- 11 why PR -->
+  <section class="slide" data-sec="Pull request" data-notes="Prečo PR a nie len rovno zlúčiť: review (niekto sa pozrie, či je to ok), spätná väzba a kvalita, jasná história prečo zmena vznikla, a kontrola, že do main ide len dokončená a odsúhlasená práca.">
+    <div class="kicker rise">Načo je to dobré</div>
+    <h2 class="rise d1">PR = brzda pred spoločnou verziou</h2>
+    <div class="gp rise d2">
+      <div class="gpi"><b>Review</b><span>niekto sa pozrie skôr, než to ide do main</span></div>
+      <div class="gpi"><b>Spätná väzba a kvalita</b><span>priestor navrhnúť úpravy</span></div>
+      <div class="gpi"><b>História „prečo"</b><span>zostane zapísané, čo a načo sa menilo</span></div>
+    </div>
+  </section>
+
+  <!-- 12 DEMO open PR -->
+  <section class="slide" data-sec="Demo" data-notes="HANDS-ON: otvor PR. Po pushnutí vetvy choď na GitHub do repa wta-a-24 — objaví sa žltý pruh 'Compare & pull request'. Klikni, daj zrozumiteľný názov a popis (čo a prečo), vytvor pull request. Ukáž záložku Files changed = diff tvojej vetvy.">
+    <div class="kicker rise">Hands-on · 3</div>
+    <h2 class="rise d1">Otvor pull request</h2>
+    <div class="lead2 rise d2">Po pushi choď na GitHub → <b>Compare &amp; pull request</b> → daj názov a popis (čo a prečo) → <b>Create pull request</b>.</div>
+    <div class="cue rise d3">→ prepni do prehliadača · GitHub repo <b>&nbsp;wta-a-24</b></div>
+  </section>
+
+  <!-- 13 MERGE -->
+  <section class="slide" data-sec="Merge" data-notes="(~15 min) Merge = zlúčenie. Keď je PR schválený, klikneš Merge — tvoja vetva sa spojí do main a tvoja práca je odteraz súčasťou spoločnej verzie. Po merge je dobré dať si lokálne pull na main, aby si mala aktuálny stav (a vetvu môžeš zmazať).">
+    <div class="kicker rise">Merge</div>
+    <h2 class="rise d1">Vetva sa <span style="color:var(--mint)">spojí späť</span> do main</h2>
+    <div class="fork rise d2">
+      <svg viewBox="0 0 760 210" width="100%" style="max-width:720px" aria-hidden="true">
+        <line x1="40" y1="150" x2="720" y2="150" stroke="#E8431F" stroke-width="3"/>
+        <circle cx="110" cy="150" r="9" fill="#E8431F"/><circle cx="210" cy="150" r="9" fill="#E8431F"/>
+        <circle cx="660" cy="150" r="11" fill="#0E9F6E"/>
+        <text x="700" y="182" text-anchor="end" fill="#E8431F" font-size="15" font-weight="700" font-family="ui-monospace,monospace">main</text>
+        <path d="M210 150 C 270 150 280 70 340 70 L 540 70 C 600 70 610 150 660 150" fill="none" stroke="#2563EB" stroke-width="3"/>
+        <circle cx="400" cy="70" r="9" fill="#2563EB"/><circle cx="500" cy="70" r="9" fill="#2563EB"/>
+        <text x="360" y="52" fill="#2563EB" font-size="15" font-weight="700" font-family="ui-monospace,monospace">feature vetva</text>
+        <text x="600" y="200" text-anchor="middle" fill="#0E9F6E" font-size="14" font-weight="700" font-family="ui-monospace,monospace">merge</text>
+      </svg>
+    </div>
+    <div class="sub rise d3">Po merge je tvoja zmena v spoločnej verzii. Daj si pull na main.</div>
+  </section>
+
+  <!-- 14 DEMO merge -->
+  <section class="slide" data-sec="Demo" data-notes="HANDS-ON: merge PR. Na GitHube v otvorenom PR klikni Merge pull request → Confirm. Ukáž, že zmena je teraz na main. Voliteľne zmaž vetvu (Delete branch). Potom v GitKrakene daj na main pull, nech máš lokálne aktuálnu spoločnú verziu.">
+    <div class="kicker rise">Hands-on · 4</div>
+    <h2 class="rise d1">Zlúč PR a stiahni si main</h2>
+    <div class="lead2 rise d2">Na GitHube <b>Merge pull request</b> → <b>Confirm</b>. Potom v GitKrakene na <b class="mono">main</b> daj <b class="mono">pull</b>.</div>
+    <div class="cue rise d3">→ GitHub: Merge · potom GitKraken: pull</div>
+  </section>
+
+  <!-- 15 CONFLICT when -->
+  <section class="slide" data-sec="Konflikt" data-notes="(~25 min) Konflikt vzniká, keď dvaja ľudia zmenia to isté miesto v tom istom súbore a obe zmeny sa snažia dostať do main. Git nevie sám rozhodnúť, ktorá verzia je tá správna, tak sa spýta teba. Pripomeň: minule sme videli, že rôzne súbory git spojí bez problému — konflikt je len pri tom istom mieste.">
+    <div class="kicker rise">Konflikt</div>
+    <h2 class="rise d1">Keď dvaja zmenia <span style="color:var(--git)">to isté miesto</span></h2>
+    <div class="lead2 rise d2">Git nevie sám rozhodnúť, ktorá verzia je správna — tak sa spýta teba. Nie je to chyba, len rozhodnutie, ktoré musí spraviť človek.</div>
+    <div class="sub rise d3">Rôzne súbory git spojí sám. Konflikt = rovnaký riadok, dve verzie.</div>
+  </section>
+
+  <!-- 16 CONFLICT markers -->
+  <section class="slide" data-sec="Konflikt" data-notes="Ako konflikt vyzerá: git vloží do súboru značky. Hore (HEAD) je tvoja verzia, dole je verzia kolegyne, oddelené čiarami. Tvoja úloha: rozhodni sa, čo tam má byť, zmaž značky &lt;&lt;&lt; === &gt;&gt;&gt;, nechaj len správny obsah, ulož, a sprav commit. GitKraken na to má aj prehľadný vizuálny nástroj.">
+    <div class="kicker rise">Ako konflikt vyzerá</div>
+    <h2 class="rise d1">Vyber správnu verziu</h2>
+    <div class="diff rise d2">
+      <div class="mark">&lt;&lt;&lt;&lt;&lt;&lt;&lt; tvoja verzia</div>
+      <div class="ours">Obľúbený nápoj: káva</div>
+      <div class="mark">=======</div>
+      <div class="theirs">Obľúbený nápoj: čaj</div>
+      <div class="mark">&gt;&gt;&gt;&gt;&gt;&gt;&gt; verzia kolegyne</div>
+    </div>
+    <div class="sub rise d3">Rozhodni → zmaž značky → nechaj správny obsah → ulož → commit.</div>
+  </section>
+
+  <!-- 17 DEMO conflict -->
+  <section class="slide" data-sec="Demo" data-notes="HANDS-ON: vyrob a vyrieš konflikt. Priprav situáciu, kde ty aj druhý účet (alebo dvojica účastníčok) zmeníte ten istý riadok. Pri merge/pull GitKraken nahlási konflikt. Otvor konfliktný súbor v GitKrakene, vyber verziu (alebo skombinuj), ulož, a sprav merge commit. Nechaj ich vyskúšať pokojne na páry.">
+    <div class="kicker rise">Hands-on · 5</div>
+    <h2 class="rise d1">Vyrob a vyrieš konflikt</h2>
+    <div class="lead2 rise d2">Dve z vás zmeňte ten istý riadok. Pri merge GitKraken nahlási konflikt → otvor súbor → vyber/skombinuj verziu → ulož → commit.</div>
+    <div class="cue rise d3">→ GitKraken: Resolve conflict (vo dvojiciach)</div>
+  </section>
+
+  <!-- 18 TEAM WORKFLOW -->
+  <section class="slide" data-sec="Súhrn" data-notes="Spoj všetko do tímového workflowu. Klikaním rozsvecuj: pull (najnovší main) → branch (vlastná vetva) → commit (robím) → push (vetva na GitHub) → PR (návrh + review) → merge (do main). A pri ďalšej úlohe zase od začiatku. Zdôrazni, že toto je presne to, ako fungujú reálne tímy.">
+    <div class="kicker rise">Tímový workflow</div>
+    <h2 class="rise d1">Takto pracuje tím</h2>
+    <div class="tl rise d2" id="bigtl">
+      <div class="axis"><div class="grown" id="grown"></div></div>
+    </div>
+    <div class="sub rise d3">pull → branch → commit → push → pull request → merge &nbsp;↻</div>
+  </section>
+
+  <!-- 19 GOOD PRACTICES -->
+  <section class="slide" data-sec="Súhrn" data-notes="Pár tímových zvykov: jedna vetva = jedna téma (nemiešaj veci dokopy); pull main pred vytvorením novej vetvy; nepushuj rovno do main, choď cez PR; v PR jasne napíš čo a prečo; po merge vetvu zmaž, nech je poriadok. Povedz to ako kamarátske rady.">
+    <div class="kicker rise">Pár tímových zvykov</div>
+    <h2 class="rise d1">Aby sa to tímu <span style="color:var(--git)">dobre čítalo</span></h2>
+    <div class="gp rise d2">
+      <div class="gpi"><b>Jedna vetva = jedna téma</b><span>nemiešaj nesúvisiace zmeny</span></div>
+      <div class="gpi"><b>Pull main pred novou vetvou</b><span>vychádzaj z aktuálnej verzie</span></div>
+      <div class="gpi"><b>Do main choď cez PR</b><span>nie priamo — nech to niekto vidí</span></div>
+      <div class="gpi"><b>Po merge zmaž vetvu</b><span>nech je v repe poriadok</span></div>
+    </div>
+  </section>
+
+  <!-- 20 GLOSSARY -->
+  <section class="slide" data-sec="Súhrn" data-notes="Slovníček dnešného dňa — štyri nové pojmy. Ak si ich zapamätáte a viete čo robia, workshop splnil účel.">
+    <div class="kicker rise">Štyri nové pojmy</div>
+    <div class="verbs rise d1">
+      <div class="verb"><b>branch</b><span>vlastná bezpečná pracovná línia (vetva)</span></div>
+      <div class="verb"><b>pull request</b><span>návrh zlúčiť vetvu do main + miesto na review</span></div>
+      <div class="verb"><b>merge</b><span>zlúčenie vetvy späť do main</span></div>
+      <div class="verb"><b>conflict</b><span>dve verzie toho istého miesta — rozhodneš ty</span></div>
+    </div>
+  </section>
+
+  <!-- 21 CLOSE -->
+  <section class="slide" data-sec="Záver" data-notes="(~10 min) Zhrnutie a otázky. Spýtaj sa vlastnými slovami: Čo je branch a načo? Čo je pull request? Kedy vzniká konflikt? Poďakuj. Pochváľ ich — zvládli celý základný aj tímový git. Pripomeň, kde nájdu materiály (GitHub Pages, INSTALL).">
+    <div class="kicker rise">Ďakujem 🎉</div>
+    <h1 class="rise d1">Otázky?</h1>
+    <div class="lead rise d2">Čo je branch a načo? Čo je pull request? Kedy vzniká konflikt? — skús vlastnými slovami.</div>
+  </section>
+
+</div>
+
+<div id="notes"><h4>Poznámky pre prezentujúcu</h4><div class="body" id="notesBody"></div></div>
+
+<div class="foot">
+  <span class="pgnum" id="pgnum">01 / 21</span>
+  <div class="spine" id="spine"></div>
+  <span class="brand">GIT · WTA-A-24</span>
+</div>
+
+<script>
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var spine = document.getElementById('spine');
+  var pgnum = document.getElementById('pgnum');
+  var notes = document.getElementById('notes');
+  var notesBody = document.getElementById('notesBody');
+  var i = 0, notesOn = false;
+
+  var pips = slides.map(function(_, n){
+    var p = document.createElement('span'); p.className='pip';
+    p.style.left = (slides.length===1?0:(n/(slides.length-1))*100)+'%';
+    p.addEventListener('click', function(){ go(n); });
+    spine.appendChild(p);
+    return p;
+  });
+  var fill = document.createElement('span'); fill.className='fill'; spine.appendChild(fill);
+
+  var bigStops = ['pull','branch','commit','push','PR','merge'];
+  var bigStep = 0, bigEl = document.getElementById('bigtl'), grown = document.getElementById('grown');
+  function renderBig(){
+    if(!bigEl) return;
+    Array.prototype.slice.call(bigEl.querySelectorAll('.node2')).forEach(function(n){n.remove();});
+    bigStops.forEach(function(label, k){
+      var n = document.createElement('div'); n.className='node2'+(k<bigStep?' on':'');
+      n.style.left = (k/(bigStops.length-1))*100+'%';
+      n.innerHTML = '<b>'+label+'</b>';
+      bigEl.appendChild(n);
+    });
+    var w = bigStep<=1 ? 0 : ((bigStep-1)/(bigStops.length-1))*100;
+    grown.style.width = w+'%';
+  }
+
+  function render(){
+    slides.forEach(function(s,n){ s.classList.toggle('active', n===i); });
+    pips.forEach(function(p,n){ p.classList.remove('done','cur'); if(n<i)p.classList.add('done'); if(n===i)p.classList.add('cur'); });
+    fill.style.width = (slides.length===1?0:(i/(slides.length-1))*100)+'%';
+    pgnum.textContent = String(i+1).padStart(2,'0')+' / '+String(slides.length).padStart(2,'0');
+    notesBody.textContent = slides[i].getAttribute('data-notes')||'—';
+    if(slides[i].querySelector('#bigtl')){ bigStep=0; renderBig(); }
+  }
+  function go(n){ i=Math.max(0,Math.min(slides.length-1,n)); render(); }
+  function next(){
+    var cur = slides[i];
+    if(cur.querySelector('#bigtl') && bigStep < bigStops.length){ bigStep++; renderBig(); return; }
+    go(i+1);
+  }
+  function prev(){
+    var cur = slides[i];
+    if(cur.querySelector('#bigtl') && bigStep>0){ bigStep--; renderBig(); return; }
+    go(i-1);
+  }
+
+  document.addEventListener('keydown', function(e){
+    if(e.key==='ArrowRight'||e.key===' '||e.key==='PageDown'){ e.preventDefault(); next(); }
+    else if(e.key==='ArrowLeft'||e.key==='PageUp'){ e.preventDefault(); prev(); }
+    else if(e.key==='Home'){ go(0); }
+    else if(e.key==='End'){ go(slides.length-1); }
+    else if(e.key==='s'||e.key==='S'){ notesOn=!notesOn; notes.classList.toggle('show',notesOn); }
+    else if(e.key==='f'||e.key==='F'){ if(!document.fullscreenElement){document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen();}else{document.exitFullscreen&&document.exitFullscreen();} }
+  });
+  document.getElementById('deck').addEventListener('click', function(e){ next(); });
+
+  render();
+  renderBig();
+</script>
