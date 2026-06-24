@@ -276,7 +276,7 @@
   </section>
 
   <!-- 10 MERGE concept -->
-  <section class="slide" data-sec="Merge" data-notes="(~15 min blok) Merge = zlúčenie vetvy späť do main. Keď je práca hotová, spojíme vetvu do main a zmena je v spoločnej verzii. Callback na konflikt: ak vetva a main zmenili to isté miesto, merge spôsobí konflikt — ale to už vieš vyriešiť (videli sme na začiatku). Väčšinou ale merge prebehne hladko.">
+  <section class="slide" data-sec="Merge" data-notes="(~15 min blok) Merge = zlúčenie vetvy späť do main. DÔLEŽITÉ poradie: najprv sa prepni (checkout) na vetvu, DO ktorej chceš zlúčiť (typicky main), a až POTOM do nej zlúč svoju feature vetvu. Časté začiatočnícke zaváhanie — pripomeň to. Keď je práca hotová, spojíme vetvu do main a zmena je v spoločnej verzii. Callback na konflikt: ak vetva a main zmenili to isté miesto, merge spôsobí konflikt — ale to už vieš vyriešiť. Väčšinou prebehne hladko.">
     <div class="kicker rise">Merge</div>
     <h2 class="rise d1">Vetva sa <span style="color:var(--mint)">spojí späť</span> do main</h2>
     <div class="fork rise d2">
@@ -291,6 +291,7 @@
         <text x="600" y="200" text-anchor="middle" fill="#0E9F6E" font-size="14" font-weight="700" font-family="ui-monospace,monospace">merge</text>
       </svg>
     </div>
+    <div class="lead2 rise d3" style="margin-top:1.4rem">⚠️ Najprv <b>checkout</b> na cieľovú vetvu (napr. <b class="mono">main</b>) — až potom do nej zlúč svoju vetvu.</div>
     <div class="sub rise d3">Ak sa dotklo to isté miesto, vznikne konflikt — a ten už vieš vyriešiť.</div>
   </section>
 
@@ -318,7 +319,7 @@
   <!-- 13 why PR -->
   <section class="slide" data-sec="Pull request" data-notes="Prečo radšej PR než len lokálny merge do main: review (niekto sa pozrie skôr, než to ide do spoločnej verzie), priestor na spätnú väzbu a kvalitu, a zostane jasná história prečo zmena vznikla. V reálnych tímoch ide do main takmer všetko cez PR.">
     <div class="kicker rise">Načo je PR</div>
-    <h2 class="rise d1">Brzda pred spoločnou verziou</h2>
+    <h2 class="rise d1">Tri dôvody pre <span style="color:var(--sky)">pull request</span></h2>
     <div class="gp rise d2">
       <div class="gpi"><b>Review</b><span>niekto sa pozrie skôr, než to ide do main</span></div>
       <div class="gpi"><b>Spätná väzba a kvalita</b><span>priestor navrhnúť úpravy</span></div>
